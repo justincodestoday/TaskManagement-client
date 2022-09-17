@@ -21,8 +21,6 @@ const contextClass = {
     dark: "bg-white-600 font-gray-300",
 };
 
-// add commit
-
 function App() {
     return (
         <div className="App">
@@ -39,11 +37,10 @@ function App() {
 
             {/* <Navbar /> */}
             <Routes>
-                <Route path="/" element={<Landing />} />
-
                 <Route path="/main" element={<Main />} />
 
                 <Route element={<GuestRoutes />}>
+                    <Route path="/" element={<Landing />} />
                     <Route path="/login" element={<Login />}></Route>
                     <Route path="/register" element={<Register />}></Route>
                 </Route>
