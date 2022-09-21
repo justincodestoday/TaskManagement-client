@@ -2,6 +2,8 @@ import { Fragment } from "react";
 import { Disclosure, Menu, Transition } from "@headlessui/react";
 import { Bars3Icon, BellIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { useNavigate } from "react-router-dom";
+import { DragDropContext } from "react-beautiful-dnd";
+
 import { logout } from "../../api/users";
 
 const user = {
@@ -20,7 +22,10 @@ const navigation = [
 const userNavigation = [
   { name: "Your Profile", href: "#" },
   { name: "Settings", href: "#" },
-  { name: "Sign out", href: "#" },
+  // {
+  //   name: "Sign out",
+  //   href: "#",
+  // },
 ];
 
 function classNames(...classes) {
@@ -71,15 +76,6 @@ export const Main = () => {
                             {item.name}
                           </a>
                         ))}
-                        <button
-                          className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium"
-                          onClick={() => {
-                            logout();
-                            navigate("/");
-                          }}
-                        >
-                          Logout
-                        </button>
                       </div>
                     </div>
                   </div>
@@ -130,6 +126,23 @@ export const Main = () => {
                                 )}
                               </Menu.Item>
                             ))}
+                            <Menu.Item>
+                              {({ active }) => (
+                                <a
+                                  href="/login"
+                                  className={classNames(
+                                    active ? "bg-gray-100" : "",
+                                    "block px-4 py-2 text-sm text-gray-700"
+                                  )}
+                                  onClick={() => {
+                                    logout();
+                                    // navigate("/login");
+                                  }}
+                                >
+                                  Logout
+                                </a>
+                              )}
+                            </Menu.Item>
                           </Menu.Items>
                         </Transition>
                       </Menu>
@@ -210,6 +223,16 @@ export const Main = () => {
                         {item.name}
                       </Disclosure.Button>
                     ))}
+                    <Disclosure.Button
+                      as="a"
+                      className="block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-gray-700 hover:text-white"
+                      onClick={() => {
+                        logout();
+                        navigate("/login");
+                      }}
+                    >
+                      Logout
+                    </Disclosure.Button>
                   </div>
                 </div>
               </Disclosure.Panel>

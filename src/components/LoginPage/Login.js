@@ -4,11 +4,10 @@ import { useMutation } from "react-query";
 import { toast } from "react-toastify";
 import { login } from "../../api/users";
 // import { LockClosedIcon } from "@heroicons/react/20/solid";
-import Logo from "../../images/Logos/logo-white-background.jpeg";
 
 export const Login = () => {
   const [user, setUser] = useState({
-    username: "",
+    email: "",
     password: "",
   });
 
@@ -73,14 +72,13 @@ export const Login = () => {
 
   return (
     <>
-      <div className="h-screen">
+      <section className="h-screen">
         <div className="flex min-h-full items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
           <div className="w-full max-w-md space-y-8">
             <div>
               <img
                 className="mx-auto h-40 w-auto"
-                // src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600"
-                src={Logo}
+                src={`${process.env.PUBLIC_URL}/images/Logos/logo-white-background.jpeg`}
                 alt="Weekee"
               />
               <h2 className="mt-6 text-center text-3xl font-bold tracking-tight text-gray-900">
@@ -95,14 +93,14 @@ export const Login = () => {
             >
               <div className="-space-y-px rounded-md shadow-sm">
                 <div>
-                  <label htmlFor="username" className="sr-only">
+                  <label htmlFor="email" className="sr-only">
                     Email address
                   </label>
                   <input
-                    id="username"
-                    name="username"
+                    id="email"
+                    name="email"
                     type="email"
-                    autoComplete="username"
+                    autoComplete="email"
                     required
                     className="relative block w-full appearance-none rounded-none rounded-t-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:z-10 focus:border-purple-500 focus:outline-none focus:ring-purple-500 sm:text-sm"
                     placeholder="Email address"
@@ -174,7 +172,7 @@ export const Login = () => {
             </form>
           </div>
         </div>
-      </div>
+      </section>
     </>
   );
 };

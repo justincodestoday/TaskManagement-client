@@ -12,6 +12,7 @@ import PublicRoutes from "./components/Routes/PublicRoutes";
 import PrivateRoutes from "./components/Routes/PrivateRoutes";
 import AdminRoutes from "./components/Routes/AdminRoutes";
 import UserRoutes from "./components/Routes/UserRoutes";
+import FinalSpace from "./components/FinalSpace";
 
 const contextClass = {
   success: "bg-green-600",
@@ -36,6 +37,7 @@ function App() {
       <Routes>
         <Route element={<PrivateRoutes />}>
           <Route path="/main" element={<Main />} />
+          <Route path="/final-space" element={<FinalSpace />} />
         </Route>
 
         <Route element={<PublicRoutes />}>
