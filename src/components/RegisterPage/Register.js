@@ -6,6 +6,8 @@ import { register } from "../../api/users";
 
 export const Register = () => {
   const [user, setUser] = useState({
+    firstname: "",
+    lastname: "",
     email: "",
     password: "",
   });
