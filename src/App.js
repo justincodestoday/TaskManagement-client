@@ -4,15 +4,14 @@ import { ToastContainer } from "react-toastify";
 
 import "./App.css";
 
-import { Login } from "./components/LoginPage";
-import { Register } from "./components/RegisterPage";
-import { Landing } from "./components/LandingPage";
-import { Main } from "./components/MainPage";
-import PublicRoutes from "./components/Routes/PublicRoutes";
-import PrivateRoutes from "./components/Routes/PrivateRoutes";
-import AdminRoutes from "./components/Routes/AdminRoutes";
-import UserRoutes from "./components/Routes/UserRoutes";
-import FinalSpace from "./components/FinalSpace";
+import { Login } from "./components/pages/LoginPage";
+import { Register } from "./components/pages/RegisterPage";
+import { Landing } from "./components/pages/LandingPage";
+import { Dashboard } from "./components/pages/DashboardPage";
+import PublicRoutes from "./components/routes/PublicRoutes";
+import PrivateRoutes from "./components/routes/PrivateRoutes";
+import AdminRoutes from "./components/routes/AdminRoutes";
+import UserRoutes from "./components/routes/UserRoutes";
 
 const contextClass = {
   success: "bg-green-600",
@@ -35,13 +34,13 @@ function App() {
       />
 
       <Routes>
+        <Route path="/" element={<Landing />}></Route>
+
         <Route element={<PrivateRoutes />}>
-          <Route path="/main" element={<Main />} />
-          <Route path="/final-space" element={<FinalSpace />} />
+          <Route path="/dashboard" element={<Dashboard />} />
         </Route>
 
         <Route element={<PublicRoutes />}>
-          <Route path="/" element={<Landing />}></Route>
           <Route path="/login" element={<Login />}></Route>
           <Route path="/register" element={<Register />}></Route>
         </Route>

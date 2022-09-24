@@ -1,17 +1,25 @@
-import { Fragment } from "react";
+import { Fragment, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Popover, Transition } from "@headlessui/react";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 
 import "./Landing.css";
+import Footer from "../../partials/Footer";
+import { checkAuth, logout } from "../../../api/users";
 
 const navigation = [
-  { name: "Product", href: "/main" },
-  //   { name: "Marketplace", href: "!#" },
-  //   { name: "Company", href: "!#" },
+  { name: "Dashboard", href: "/dashboard" },
+  //   { name: "Marketplace", href: "/" },
+  // { name: "Company", href: "/" },
 ];
 
 export const Landing = () => {
+  const { isAuth, user } = checkAuth();
+
+  useEffect(() => {
+    document.title = "Weekee - Task Manager";
+  }, []);
+
   return (
     <div>
       <div className="relative overflow-hidden bg-white">
@@ -40,8 +48,7 @@ export const Landing = () => {
                         <img
                           alt="Weekee"
                           className="h-14 w-auto sm:h-36"
-                          src={`
-                            ${process.env.PUBLIC_URL}/images/Logos/logo-white-background-alt.jpeg`}
+                          src={`${process.env.PUBLIC_URL}/images/Logos/logo-white-background-alt.jpeg`}
                         />
                       </a>
                       <div className="-mr-2 flex items-center md:hidden">
@@ -62,18 +69,37 @@ export const Landing = () => {
                         {item.name}
                       </a>
                     ))}
-                    <Link
-                      to="/login"
-                      className="font-medium text-violet-600 hover:text-violet-500"
-                    >
-                      <button>Sign in</button>
-                    </Link>
-                    <Link
-                      to="/register"
-                      className="font-medium text-white bg-violet-600 rounded-md py-2 px-4 hover:bg-violet-700"
-                    >
-                      <button>Sign up</button>
-                    </Link>
+                    {isAuth ? (
+                      <>
+                        <Link
+                          to="/login"
+                          className="font-medium text-white bg-violet-600 rounded-md py-2 px-4 hover:bg-violet-700"
+                        >
+                          <button
+                            onClick={() => {
+                              logout();
+                            }}
+                          >
+                            Log out
+                          </button>
+                        </Link>
+                      </>
+                    ) : (
+                      <>
+                        <Link
+                          to="/login"
+                          className="font-medium text-violet-600 hover:text-violet-500"
+                        >
+                          <button>Sign in</button>
+                        </Link>
+                        <Link
+                          to="/register"
+                          className="font-medium text-white bg-violet-600 rounded-md py-2 px-4 hover:bg-violet-700"
+                        >
+                          <button>Sign up</button>
+                        </Link>
+                      </>
+                    )}
                   </div>
                 </nav>
               </div>
@@ -95,8 +121,8 @@ export const Landing = () => {
                     <div className="flex items-center justify-between px-5 pt-4">
                       <div>
                         <img
-                          className="h-8 w-auto"
-                          src="https://tailwindui.com/img/logos/mark.svg?color=violet&shade=600"
+                          className="h-20 w-auto"
+                          src={`${process.env.PUBLIC_URL}/images/Logos/logo-white-background-alt.jpeg`}
                           alt=""
                         />
                       </div>
@@ -118,18 +144,37 @@ export const Landing = () => {
                         </a>
                       ))}
                     </div>
-                    <Link
-                      to="/login"
-                      className="block w-full bg-gray-50 px-5 py-3 text-center font-medium text-violet-600 hover:bg-gray-100"
-                    >
-                      <button>Sign in</button>
-                    </Link>
-                    <Link
-                      to="/register"
-                      className="block w-full bg-gray-50 px-5 py-3 text-center font-medium text-violet-600 hover:bg-gray-100"
-                    >
-                      <button>Sign up</button>
-                    </Link>
+                    {isAuth ? (
+                      <>
+                        <Link
+                          to="/login"
+                          className="block w-full bg-gray-50 px-5 py-3 text-center font-medium text-violet-600 hover:bg-gray-100"
+                        >
+                          <button
+                            onClick={() => {
+                              logout();
+                            }}
+                          >
+                            Log out
+                          </button>
+                        </Link>
+                      </>
+                    ) : (
+                      <>
+                        <Link
+                          to="/login"
+                          className="block w-full bg-gray-50 px-5 py-3 text-center font-medium text-violet-600 hover:bg-gray-100"
+                        >
+                          <button>Sign in</button>
+                        </Link>
+                        <Link
+                          to="/register"
+                          className="block w-full bg-gray-50 px-5 py-3 text-center font-medium text-violet-600 hover:bg-gray-100"
+                        >
+                          <button>Sign up</button>
+                        </Link>
+                      </>
+                    )}
                   </div>
                 </Popover.Panel>
               </Transition>
@@ -161,7 +206,7 @@ export const Landing = () => {
                   </div>
                   <div className="mt-3 sm:mt-0 sm:ml-3">
                     <a
-                      href="!#"
+                      href="/"
                       className="flex w-full items-center justify-center rounded-md border border-transparent bg-violet-100 px-8 py-3 text-base font-medium text-violet-700 hover:bg-violet-200 md:py-4 md:px-10 md:text-lg"
                     >
                       Contact us
@@ -175,23 +220,13 @@ export const Landing = () => {
         <div className="lg:absolute lg:inset-y-0 lg:right-0 lg:w-1/2">
           <img
             className="h-56 w-full object-cover sm:h-72 md:h-96 lg:h-full lg:w-full"
-            src={`
-            ${process.env.PUBLIC_URL}/images/landingwallpaper.webp`}
+            src={`${process.env.PUBLIC_URL}/images/landingwallpaper.webp`}
             alt="Scribblings on a board"
           />
         </div>
       </div>
       <div className="footer">
-        <p>
-          Copyright &copy; Weekee 2022 &bull;{" "}
-          <a
-            href="/"
-            // the following line opens links in a new tab every time
-            //  target="_blank"
-          >
-            Justin Chong
-          </a>
-        </p>
+        <Footer />
       </div>
     </div>
   );

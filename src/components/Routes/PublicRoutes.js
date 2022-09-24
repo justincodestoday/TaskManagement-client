@@ -4,7 +4,7 @@ import { checkAuth } from "../../api/users";
 const PublicRoutes = () => {
   const { isAuth } = checkAuth();
 
-  return !isAuth ? <Outlet /> : <Navigate to="/main" />;
+  return !isAuth ? <Outlet /> : <Navigate to="/dashboard" />;
 };
 
 export default PublicRoutes;

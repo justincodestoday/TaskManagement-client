@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useMutation } from "react-query";
 import { toast } from "react-toastify";
-import { register } from "../../api/users";
+
+import { register } from "../../../api/users";
 
 export const Register = () => {
   const [user, setUser] = useState({
@@ -40,7 +41,7 @@ export const Register = () => {
         draggable: false,
       });
 
-      navigate("/main");
+      navigate("/dashboard");
     },
   });
 
@@ -56,6 +57,10 @@ export const Register = () => {
     e.preventDefault();
     mutation.mutate(user);
   };
+
+  useEffect(() => {
+    document.title = "Weekee | Sign Up";
+  }, []);
 
   return (
     <>
@@ -76,7 +81,7 @@ export const Register = () => {
               className="mt-8 space-y-6"
               action="#"
               method="POST"
-              onSubmit={onSubmitHandler}
+              onSubmit={(e) => onSubmitHandler(e)}
             >
               <div className="-space-y-px rounded-md shadow-sm">
                 <div className="grid grid-cols-2">
@@ -91,7 +96,7 @@ export const Register = () => {
                       required
                       className="relative block w-full appearance-none rounded-none rounded-tl-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:z-10 focus:border-green-500 focus:outline-none focus:ring-green-500 sm:text-sm"
                       placeholder="First name"
-                      onChange={onChangeHandler}
+                      onChange={(e) => onChangeHandler(e)}
                     />
                   </div>
 
@@ -106,7 +111,7 @@ export const Register = () => {
                       required
                       className="relative block w-full appearance-none rounded-none rounded-tr-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:z-10 focus:border-green-500 focus:outline-none focus:ring-green-500 sm:text-sm"
                       placeholder="Last name"
-                      onChange={onChangeHandler}
+                      onChange={(e) => onChangeHandler(e)}
                     />
                   </div>
                 </div>
@@ -122,7 +127,7 @@ export const Register = () => {
                     required
                     className="relative block w-full appearance-none rounded-none border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:z-10 focus:border-green-500 focus:outline-none focus:ring-green-500 sm:text-sm"
                     placeholder="Email address"
-                    onChange={onChangeHandler}
+                    onChange={(e) => onChangeHandler(e)}
                   />
                 </div>
                 <div>
@@ -137,7 +142,7 @@ export const Register = () => {
                     required
                     className="relative block w-full appearance-none rounded-none rounded-b-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:z-10 focus:border-green-500 focus:outline-none focus:ring-green-500 sm:text-sm"
                     placeholder="Password"
-                    onChange={onChangeHandler}
+                    onChange={(e) => onChangeHandler(e)}
                     // onMouseDown={togglePassword}
                     // onMouseUp={() =>
                     //     setPasswordShown(false)
@@ -152,7 +157,7 @@ export const Register = () => {
                   name="showPassword"
                   type="checkbox"
                   className="h-4 w-4 rounded border-gray-300 text-green-600 focus:ring-green-500"
-                  onChange={togglePassword}
+                  onChange={() => togglePassword()}
                 />
                 <label
                   htmlFor="showPassword"

@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useMutation } from "react-query";
 import { toast } from "react-toastify";
-import { login } from "../../api/users";
 // import { LockClosedIcon } from "@heroicons/react/20/solid";
+
+import { login } from "../../../api/users";
 
 export const Login = () => {
   const [user, setUser] = useState({
@@ -53,7 +54,7 @@ export const Login = () => {
         draggable: false,
       });
 
-      navigate("/main");
+      navigate("/dashboard");
     },
   });
 
@@ -69,6 +70,10 @@ export const Login = () => {
     e.preventDefault();
     mutation.mutate(user);
   };
+
+  useEffect(() => {
+    document.title = "Weekee | Sign In";
+  }, []);
 
   return (
     <>

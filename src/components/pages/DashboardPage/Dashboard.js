@@ -1,27 +1,40 @@
-import { Fragment } from "react";
+import { Fragment, useEffect } from "react";
+
 import { Disclosure, Menu, Transition } from "@headlessui/react";
 import { Bars3Icon, BellIcon, XMarkIcon } from "@heroicons/react/24/outline";
-import { useNavigate } from "react-router-dom";
+
+import { Link, useNavigate } from "react-router-dom";
 import { DragDropContext } from "react-beautiful-dnd";
+import { useQuery } from "react-query";
+import { RotatingLines } from "react-loader-spinner";
 
-import { logout } from "../../api/users";
+import Card from "@mui/material/Card";
+import CardContent from "@mui/material/CardContent";
+import Typography from "@mui/material/Typography";
+import { CardActionArea } from "@mui/material";
+import { deepPurple } from "@mui/material/colors";
 
-const user = {
-  name: "Tom Cook",
-  email: "tom@example.com",
-  imageUrl:
-    "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
-};
+// import "./Dashboard.css";
+import { checkAuth, logout } from "../../../api/users";
+import { getBoards } from "../../../api/boards";
+import CreateBoard from "../../partials/CreateBoard";
+
+// const user = {
+//   name: "Tom Cook",
+//   email: "tom@example.com",
+//   imageUrl:
+//     "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
+// };
 const navigation = [
-  { name: "Dashboard", href: "#", current: true },
-  { name: "Team", href: "#", current: false },
-  { name: "Projects", href: "#", current: false },
-  { name: "Calendar", href: "#", current: false },
-  { name: "Reports", href: "#", current: false },
+  { name: "Dashboard", href: "/dashboard", current: true },
+  // { name: "Team", href: "/dashboard", current: false },
+  // { name: "Projects", href: "/dashboard", current: false },
+  // { name: "Calendar", href: "/dashboard", current: false },
+  // { name: "Reports", href: "/dashboard", current: false },
 ];
 const userNavigation = [
-  { name: "Your Profile", href: "#" },
-  { name: "Settings", href: "#" },
+  { name: "Your Profile", href: "/dashboard" },
+  { name: "Settings", href: "/dashboard" },
   // {
   //   name: "Sign out",
   //   href: "#",
@@ -32,8 +45,51 @@ function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
 
-export const Main = () => {
+export const Dashboard = () => {
   const navigate = useNavigate();
+  const { isAuth, user } = checkAuth();
+
+  useEffect(() => {
+    document.title = "Weekee | Dashboard";
+  }, []);
+
+  const { data, error, isLoading, isError } = useQuery("boards", getBoards);
+
+  if (isLoading) {
+    return (
+      <RotatingLines
+        strokeColor="grey"
+        strokeWidth="5"
+        animationDuration="0.75"
+        width="96"
+        visible={true}
+      />
+    );
+  }
+
+  if (isError) {
+    return (
+      <>
+        <h2>Error: {error.message}</h2>
+        <h2>
+          Please{" "}
+          <Link
+            to="/login"
+            className="underline decoration-blue-500 hover:decoration-blue-600 text-blue-500 hover:text-blue-600"
+          >
+            <button
+              onClick={() => {
+                logout();
+              }}
+            >
+              click here
+            </button>
+          </Link>{" "}
+          to sign out.
+        </h2>
+      </>
+    );
+  }
 
   return (
     <>
@@ -54,8 +110,8 @@ export const Main = () => {
                   <div className="flex items-center">
                     <div className="flex-shrink-0">
                       <img
-                        className="h-8 w-8"
-                        src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=500"
+                        className="h-16 w-auto"
+                        src={`${process.env.PUBLIC_URL}/images/Logos/logo-gray-background.jpeg`}
                         alt="Your Company"
                       />
                     </div>
@@ -96,7 +152,7 @@ export const Main = () => {
                             <span className="sr-only">Open user menu</span>
                             <img
                               className="h-8 w-8 rounded-full"
-                              src={user.imageUrl}
+                              src={user.data.avatar}
                               alt=""
                             />
                           </Menu.Button>
@@ -192,16 +248,16 @@ export const Main = () => {
                     <div className="flex-shrink-0">
                       <img
                         className="h-10 w-10 rounded-full"
-                        src={user.imageUrl}
+                        src={user.data.avatar}
                         alt=""
                       />
                     </div>
                     <div className="ml-3">
                       <div className="text-base font-medium leading-none text-white">
-                        {user.name}
+                        {user.data.name}
                       </div>
                       <div className="text-sm font-medium leading-none text-gray-400">
-                        {user.email}
+                        {user.data.email}
                       </div>
                     </div>
                     <button
@@ -243,18 +299,46 @@ export const Main = () => {
         <header className="bg-white shadow">
           <div className="mx-auto max-w-7xl py-6 px-4 sm:px-6 lg:px-8">
             <h1 className="text-3xl font-bold tracking-tight text-gray-900">
-              Dashboard
+              Your Boards
             </h1>
           </div>
         </header>
         <main>
           <div className="mx-auto max-w-7xl py-6 sm:px-6 lg:px-8">
             {/* Replace with your content */}
-            <div className="px-4 py-6 sm:px-0">
-              <div className="h-96 rounded-lg border-4 border-dashed border-gray-200">
-                Content goes here
+            <section className="grid grid-cols-1 gap-0 sm:grid-cols-4 sm:gap-4">
+              {/* <div className=""> */}
+              {data.map((board) => (
+                <div className="px-4 py-2 sm:px-0 sm:py-0">
+                  <Card
+                    sx={{
+                      maxWidth: {
+                        md: 345,
+                      },
+                      color: deepPurple[800],
+                      backgroundColor: deepPurple[50],
+                      "&:hover": {
+                        backgroundColor: deepPurple[100],
+                        color: "#fff",
+                      },
+                    }}
+                    key={board._id}
+                  >
+                    <CardActionArea component={Link} to={`/board/${board._id}`}>
+                      <CardContent>
+                        <Typography gutterBottom variant="h5" component="div">
+                          {board.title}
+                        </Typography>
+                      </CardContent>
+                    </CardActionArea>
+                  </Card>
+                </div>
+              ))}
+              {/* </div> */}
+              <div className="px-4 py-2 sm:px-0 sm:py-0">
+                <CreateBoard />
               </div>
-            </div>
+            </section>
             {/* /End replace */}
           </div>
         </main>
