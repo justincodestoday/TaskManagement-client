@@ -1,17 +1,19 @@
-import { Fragment, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { useQuery } from "react-query";
+import React, { Fragment, useState, useEffect } from "react";
+import { Link, useNavigate, useParams } from "react-router-dom";
+import { DragDropContext, Droppable } from "react-beautiful-dnd";
+import { useQuery, useMutation } from "react-query";
 import { RotatingLines } from "react-loader-spinner";
 
 import { Disclosure, Menu, Transition } from "@headlessui/react";
 import { Bars3Icon, BellIcon, XMarkIcon } from "@heroicons/react/24/outline";
-import { Card, CardContent, CardActionArea, Typography } from "@mui/material";
-import { deepPurple } from "@mui/material/colors";
 
-// import "./Dashboard.css";
 import { checkAuth, logout } from "../../../api/users";
-import { getBoards } from "../../../api/boards";
-import CreateBoard from "../../partials/CreateBoard";
+import { getBoard, moveCard, moveList } from "../../../api/boards";
+// import BoardTitle from "../board/BoardTitle";
+// import BoardDrawer from "../board/BoardDrawer";
+// import List from "../list/List";
+// import CreateList from "../board/CreateList";
+// import Members from "../board/Members";
 
 // const user = {
 //   name: "Tom Cook",
@@ -20,7 +22,7 @@ import CreateBoard from "../../partials/CreateBoard";
 //     "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
 // };
 const navigation = [
-  { name: "Dashboard", href: "/dashboard", current: true },
+  { name: "Dashboard", href: "/dashboard", current: false },
   // { name: "Team", href: "/dashboard", current: false },
   // { name: "Projects", href: "/dashboard", current: false },
   // { name: "Calendar", href: "/dashboard", current: false },
@@ -39,62 +41,28 @@ const classNames = (...classes) => {
   return classes.filter(Boolean).join(" ");
 };
 
-export const Dashboard = () => {
+export const Board = ({ match }) => {
+  const [board, setBoard] = useState([]);
   const navigate = useNavigate();
   const { isAuth, user } = checkAuth();
+  const { id } = useParams();
+
+  const mutation = useMutation((id) => getBoard(id), {
+    onSuccess: (data) => {
+      setBoard(data);
+    },
+  });
 
   useEffect(() => {
-    document.title = "Weekee | Dashboard";
-  }, []);
+    mutation.mutate(id);
+  }, [id]);
 
-  const { data, error, isLoading, isError } = useQuery("boards", getBoards);
-
-  if (isLoading) {
-    return (
-      <RotatingLines
-        strokeColor="grey"
-        strokeWidth="5"
-        animationDuration="0.75"
-        width="96"
-        visible={true}
-      />
-    );
-  }
-
-  if (isError) {
-    return (
-      <>
-        <h2>Error: {error.message}</h2>
-        <h2>
-          Please{" "}
-          <Link
-            to="/login"
-            className="underline decoration-blue-500 hover:decoration-blue-600 text-blue-500 hover:text-blue-600"
-          >
-            <button
-              onClick={() => {
-                logout();
-              }}
-            >
-              click here
-            </button>
-          </Link>{" "}
-          to sign out.
-        </h2>
-      </>
-    );
-  }
+  useEffect(() => {
+    if (board?.title) document.title = "Weekee | " + board.title;
+  }, [board?.title]);
 
   return (
     <>
-      {/*
-        This example requires updating your template:
-
-        ```
-        <html class="h-full bg-gray-100">
-        <body class="h-full">
-        ```
-      */}
       <div className="min-h-full">
         <Disclosure as="nav" className="bg-gray-800">
           {({ open }) => (
@@ -289,52 +257,53 @@ export const Dashboard = () => {
             </>
           )}
         </Disclosure>
-
-        <header className="bg-white shadow">
-          <div className="mx-auto max-w-7xl py-6 px-4 sm:px-6 lg:px-8">
-            <h1 className="text-3xl font-bold tracking-tight text-gray-900">
-              Your Boards
-            </h1>
-          </div>
-        </header>
-        <main>
-          <div className="mx-auto max-w-7xl py-6 sm:px-6 lg:px-8">
-            {/* Replace with your content */}
-            <section className="grid grid-cols-1 gap-0 sm:grid-cols-4 sm:gap-4">
-              {/* <div className=""> */}
-              {data.map((board) => (
-                <div className="px-4 py-2 sm:px-0 sm:py-0" key={board._id}>
-                  <Card
-                    sx={{
-                      maxWidth: {
-                        md: 345,
-                      },
-                      color: deepPurple[800],
-                      backgroundColor: deepPurple[50],
-                      "&:hover": {
-                        backgroundColor: deepPurple[100],
-                        color: "#fff",
-                      },
-                    }}
-                  >
-                    <CardActionArea component={Link} to={`/board/${board._id}`}>
-                      <CardContent>
-                        <Typography gutterBottom variant="h5" component="div">
-                          {board.title}
-                        </Typography>
-                      </CardContent>
-                    </CardActionArea>
-                  </Card>
-                </div>
-              ))}
-              {/* </div> */}
-              <div className="px-4 py-2 sm:px-0 sm:py-0">
-                <CreateBoard />
+        {/* Replace with your content */}
+        <div
+          className="board-and-navbar"
+          style={{
+            backgroundImage:
+              "url(" +
+              (board.backgroundURL
+                ? board.backgroundURL
+                : "https://images.unsplash.com/photo-1598197748967-b4674cb3c266?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=2689&q=80") +
+              ")",
+          }}
+        >
+          <section className="board">
+            <div className="board-top">
+              <div className="board-top-left">
+                {/* <BoardTitle board={board} /> */}
+                {/* <Members /> */}
               </div>
-            </section>
-            {/* /End replace */}
-          </div>
-        </main>
+              {/* <BoardDrawer /> */}
+            </div>
+            <DragDropContext
+            // onDragEnd={onDragEnd}
+            >
+              <Droppable
+                droppableId="all-lists"
+                direction="horizontal"
+                type="list"
+              >
+                {(provided) => (
+                  <div
+                    className="lists"
+                    ref={provided.innerRef}
+                    {...provided.droppableProps}
+                  >
+                    {board.lists.map((listId, index) => (
+                      <h1>{listId}</h1>
+                      // <List key={listId} listId={listId} index={index} />
+                    ))}
+                    {provided.placeholder}
+                    {/* <CreateList /> */}
+                  </div>
+                )}
+              </Droppable>
+            </DragDropContext>
+          </section>
+        </div>
+        {/* /End replace */}
       </div>
     </>
   );

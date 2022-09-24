@@ -86,3 +86,22 @@ export const renameBoard = async (id, formData) => {
     throw new Error(err.message);
   }
 };
+
+// Get list by id
+export const getList = async (id) => {
+  try {
+    const res = await fetch(`${process.env.REACT_APP_API_SERVER}/lists/${id}`, {
+      headers: {
+        "x-auth-token": localStorage.getItem("token"),
+      },
+    });
+    const data = await res.json();
+    if (res.ok) {
+      return data;
+    } else {
+      throw new Error(data.message);
+    }
+  } catch (err) {
+    throw new Error(err.message);
+  }
+};

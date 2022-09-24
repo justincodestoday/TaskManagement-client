@@ -2,17 +2,20 @@ import { useState } from "react";
 import { useMutation, useQueryClient } from "react-query";
 import { toast } from "react-toastify";
 
-import Card from "@mui/material/Card";
-import CardContent from "@mui/material/CardContent";
-import Typography from "@mui/material/Typography";
-import { CardActionArea } from "@mui/material";
-import Button from "@mui/material/Button";
-import TextField from "@mui/material/TextField";
-import Modal from "@mui/material/Modal";
-import Box from "@mui/material/Box";
+import {
+  Card,
+  CardContent,
+  CardActionArea,
+  Modal,
+  Button,
+  TextField,
+  Box,
+  Typography,
+} from "@mui/material";
 
 import { blue } from "@mui/material/colors";
 import CloseIcon from "@mui/icons-material/Close";
+import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 
 import { addBoard } from "../../api/boards";
 
@@ -87,7 +90,6 @@ const CreateBoard = () => {
             fullWidth
             label="Insert board title"
             autoFocus
-            //   name="title"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
           />
@@ -123,7 +125,7 @@ const CreateBoard = () => {
         <CardActionArea component="button" onClick={() => setOpen(true)}>
           <CardContent>
             <Typography gutterBottom variant="h5" component="div">
-              Create New Board
+              <AddCircleOutlineIcon /> New Board
             </Typography>
           </CardContent>
         </CardActionArea>

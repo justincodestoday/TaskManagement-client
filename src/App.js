@@ -1,6 +1,7 @@
 import React from "react";
 import { Routes, Route } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
+import { useQuery } from "react-query";
 
 import "./App.css";
 
@@ -8,10 +9,12 @@ import { Login } from "./components/pages/LoginPage";
 import { Register } from "./components/pages/RegisterPage";
 import { Landing } from "./components/pages/LandingPage";
 import { Dashboard } from "./components/pages/DashboardPage";
+import { Board } from "./components/pages/BoardPage";
 import PublicRoutes from "./components/routes/PublicRoutes";
 import PrivateRoutes from "./components/routes/PrivateRoutes";
 import AdminRoutes from "./components/routes/AdminRoutes";
 import UserRoutes from "./components/routes/UserRoutes";
+import { getBoards } from "./api/boards";
 
 const contextClass = {
   success: "bg-green-600",
@@ -23,6 +26,8 @@ const contextClass = {
 };
 
 function App() {
+  const { data } = useQuery("boards", getBoards);
+
   return (
     <div className="App">
       <ToastContainer
@@ -38,6 +43,7 @@ function App() {
 
         <Route element={<PrivateRoutes />}>
           <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/board/:id" element={<Board />} />
         </Route>
 
         <Route element={<PublicRoutes />}>
