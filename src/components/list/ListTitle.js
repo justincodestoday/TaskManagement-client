@@ -1,23 +1,62 @@
 import React, { useState, useEffect } from "react";
-import { useDispatch } from "react-redux";
 import PropTypes from "prop-types";
+import { useMutation } from "react-query";
+import { toast } from "react-toastify";
 
 import { TextField } from "@mui/material";
 
 import { renameList } from "../../api/boards";
 
-const ListTitle = ({ list }) => {
+const ListTitle = ({ list, board }) => {
   const [editing, setEditing] = useState(false);
+  const [boardId, setBoardId] = useState(board._id);
+  const [listId, setListId] = useState(list._id);
   const [title, setTitle] = useState(list.title);
-  const dispatch = useDispatch();
 
   useEffect(() => {
     setTitle(list.title);
   }, [list.title]);
 
-  const onSubmit = async (e) => {
+  useEffect(() => {
+    setBoardId(board._id);
+  }, [board._id]);
+
+  useEffect(() => {
+    setListId(list._id);
+  }, [list._id]);
+
+  const mutation = useMutation(
+    ({ boardId, listId, title }) => renameList(boardId, listId, title),
+    {
+      onError: (error) => {
+        toast.error(`Error: ${error.message}`, {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: false,
+          pauseOnFocusLoss: false,
+          draggable: false,
+        });
+      },
+
+      onSuccess: (data) => {
+        toast.success(`Success: ${data.message}`, {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: false,
+          pauseOnFocusLoss: false,
+          draggable: false,
+        });
+      },
+    }
+  );
+
+  const onSubmitHandler = async (e) => {
     e.preventDefault();
-    dispatch(renameList(list._id, { title }));
+    mutation.mutate({ boardId, listId, title });
     setEditing(false);
   };
 
@@ -26,7 +65,7 @@ const ListTitle = ({ list }) => {
       {list.title}
     </h3>
   ) : (
-    <form onSubmit={(e) => onSubmit(e)}>
+    <form onSubmit={(e) => onSubmitHandler(e)}>
       <TextField
         required
         value={title}
@@ -36,8 +75,8 @@ const ListTitle = ({ list }) => {
   );
 };
 
-ListTitle.propTypes = {
-  list: PropTypes.object.isRequired,
-};
+// ListTitle.propTypes = {
+//   list: PropTypes.object.isRequired,
+// };
 
 export default ListTitle;

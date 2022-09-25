@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { useDispatch } from "react-redux";
 import PropTypes from "prop-types";
 
 import { Button, Menu, MenuItem } from "@mui/material";
@@ -10,7 +9,8 @@ import MoveList from "./MoveList";
 
 const ListMenu = ({ listId }) => {
   const [anchorEl, setAnchorEl] = useState(null);
-  const dispatch = useDispatch();
+  // const dispatch = useDispatch();
+  const dispatch = "";
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -54,8 +54,8 @@ const ListMenu = ({ listId }) => {
   );
 };
 
-ListMenu.propTypes = {
-  listId: PropTypes.string.isRequired,
-};
+// ListMenu.propTypes = {
+//   listId: PropTypes.string.isRequired,
+// };
 
 export default ListMenu;

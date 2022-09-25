@@ -8,13 +8,17 @@ import { TextField } from "@mui/material";
 import { renameBoard } from "../../api/boards";
 
 const BoardTitle = ({ board }) => {
+  const [editing, setEditing] = useState(false);
   const [boardId, setBoardId] = useState(board._id);
   const [title, setTitle] = useState(board.title);
-  const [editing, setEditing] = useState(false);
 
   useEffect(() => {
     setTitle(board.title);
   }, [board.title]);
+
+  useEffect(() => {
+    setBoardId(board._id);
+  }, [board._id]);
 
   const mutation = useMutation(
     ({ boardId, title }) => renameBoard(boardId, title),

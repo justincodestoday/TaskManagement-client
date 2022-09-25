@@ -1,6 +1,7 @@
 import React, { useRef, useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import { Draggable, Droppable } from "react-beautiful-dnd";
+import { useQuery, useQueryClient, useMutation } from "react-query";
 
 import { Button } from "@mui/material";
 
@@ -10,18 +11,21 @@ import ListMenu from "./ListMenu";
 import Card from "../card/Card";
 import CreateCardForm from "./CreateCardForm";
 
-const List = ({ listId, index }) => {
+const List = ({ listId, index, board }) => {
   const [addingCard, setAddingCard] = useState(false);
-  // const list = useSelector((state) =>
-  //   state.board.board.listObjects.find((object) => object._id === listId)
-  // );
-  const list = "";
-  // const dispatch = useDispatch();
-  const dispatch = "";
+  const [list, setList] = useState({});
+  const queryClient = useQueryClient();
+
+  const mutation = useMutation((id) => getList(id), {
+    onSuccess: (data) => {
+      queryClient.invalidateQueries(["lists"]);
+      setList(data);
+    },
+  });
 
   useEffect(() => {
-    dispatch(getList(listId));
-  }, [dispatch, listId]);
+    mutation.mutate(listId);
+  }, [listId]);
 
   const createCardFormRef = useRef(null);
   useEffect(() => {
@@ -40,8 +44,8 @@ const List = ({ listId, index }) => {
           ref={provided.innerRef}
         >
           <div className="list-top">
-            <ListTitle list={list} />
-            <ListMenu listId={listId} />
+            <ListTitle list={list} board={board} />
+            {/* <ListMenu listId={listId} /> */}
           </div>
           <Droppable droppableId={listId} type="card">
             {(provided) => (
@@ -52,8 +56,8 @@ const List = ({ listId, index }) => {
                 {...provided.droppableProps}
                 ref={provided.innerRef}
               >
-                <div className="cards">
-                  {list.cards.map((cardId, index) => (
+                {/* <div className="cards">
+                  {list?.cards?.map((cardId, index) => (
                     <Card
                       key={cardId}
                       cardId={cardId}
@@ -61,7 +65,7 @@ const List = ({ listId, index }) => {
                       index={index}
                     />
                   ))}
-                </div>
+                </div> */}
                 {provided.placeholder}
                 {addingCard && (
                   <div ref={createCardFormRef}>
@@ -84,9 +88,9 @@ const List = ({ listId, index }) => {
   );
 };
 
-List.propTypes = {
-  listId: PropTypes.string.isRequired,
-  index: PropTypes.number.isRequired,
-};
+// List.propTypes = {
+//   listId: PropTypes.string.isRequired,
+//   index: PropTypes.number.isRequired,
+// };
 
 export default List;

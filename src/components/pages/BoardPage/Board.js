@@ -10,7 +10,7 @@ import { Box } from "@mui/material";
 
 import "./Board.css";
 import { checkAuth, logout } from "../../../api/users";
-import { getBoard, moveCard, moveList } from "../../../api/boards";
+import { getBoard, getLists, moveCard, moveList } from "../../../api/boards";
 import BoardTitle from "../../board/BoardTitle";
 import BoardDrawer from "../../board/BoardDrawer";
 import List from "../../list/List";
@@ -44,8 +44,8 @@ const classNames = (...classes) => {
 };
 
 export const Board = () => {
-  const [board, setBoard] = useState([]);
-  const [error, setError] = useState([]);
+  const [board, setBoard] = useState({});
+  const [error, setError] = useState({});
 
   const { isAuth, user } = checkAuth();
   const navigate = useNavigate();
@@ -58,6 +58,8 @@ export const Board = () => {
     },
 
     onSuccess: (data) => {
+      queryClient.invalidateQueries(["cards"]);
+      queryClient.invalidateQueries(["lists"]);
       setBoard(data);
     },
   });
@@ -331,9 +333,9 @@ export const Board = () => {
             <div className="board-top">
               <div className="board-top-left">
                 <BoardTitle board={board} />
-                <Members />
+                <Members board={board} />
               </div>
-              <BoardDrawer />
+              <BoardDrawer board={board} />
             </div>
             <DragDropContext onDragEnd={onDragEnd}>
               <Droppable
@@ -347,16 +349,14 @@ export const Board = () => {
                     ref={provided.innerRef}
                     {...provided.droppableProps}
                   >
-                    <span className="text-white">
-                      <h1>{board._id}</h1>
-                      {board?.lists?.map((listId) => (
-                        <h1 key={listId}>{listId}</h1>
-                      ))}
-                    </span>
-
-                    {/* {board?.lists?.map((listId, index) => (
-                      <List key={listId.id} listId={listId} index={index} />
-                    ))} */}
+                    {board?.lists?.map((listId, index) => (
+                      <List
+                        key={listId}
+                        listId={listId}
+                        index={index}
+                        board={board}
+                      />
+                    ))}
                     {provided.placeholder}
                     <CreateList />
                   </div>

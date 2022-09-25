@@ -1,5 +1,4 @@
 import React, { Fragment, useState, useEffect } from "react";
-import { useSelector, useDispatch } from "react-redux";
 import PropTypes from "prop-types";
 import { moveList } from "../../api/boards";
 
@@ -22,9 +21,12 @@ const MoveList = ({ listId, closeMenu }) => {
   const [openDialog, setOpenDialog] = useState(false);
   const [position, setPosition] = useState(0);
   const [positions, setPositions] = useState([0]);
-  const lists = useSelector((state) => state.board.board.lists);
-  const listObjects = useSelector((state) => state.board.board.listObjects);
-  const dispatch = useDispatch();
+  // const lists = useSelector((state) => state.board.board.lists);
+  const lists = "";
+  const listObjects = "";
+  // const listObjects = useSelector((state) => state.board.board.listObjects);
+  // const dispatch = useDispatch();
+  const dispatch = "";
 
   useEffect(() => {
     const mappedListObjects = listObjects
@@ -91,9 +93,9 @@ const MoveList = ({ listId, closeMenu }) => {
   );
 };
 
-MoveList.propTypes = {
-  listId: PropTypes.string.isRequired,
-  closeMenu: PropTypes.func.isRequired,
-};
+// MoveList.propTypes = {
+//   listId: PropTypes.string.isRequired,
+//   closeMenu: PropTypes.func.isRequired,
+// };
 
 export default MoveList;

@@ -87,6 +87,28 @@ export const renameBoard = async (id, title) => {
   }
 };
 
+// Get lists
+export const getLists = async (boardId) => {
+  try {
+    const res = await fetch(
+      `${process.env.REACT_APP_API_SERVER}/lists/board-lists/${boardId}`,
+      {
+        headers: {
+          "x-auth-token": localStorage.getItem("token"),
+        },
+      }
+    );
+    const data = await res.json();
+    if (res.ok) {
+      return data;
+    } else {
+      throw new Error(data.message);
+    }
+  } catch (err) {
+    throw new Error(err.message);
+  }
+};
+
 // Get list by id
 export const getList = async (id) => {
   try {
@@ -107,14 +129,14 @@ export const getList = async (id) => {
 };
 
 // Add list
-export const addList = async (boardId, title) => {
+export const addList = async (title) => {
   try {
     const res = await fetch(`${process.env.REACT_APP_API_SERVER}/lists`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         "x-auth-token": localStorage.getItem("token"),
-        "board-id": boardId,
+        // "board-id": boardId,
       },
       body: JSON.stringify({ title }),
     });
@@ -130,16 +152,16 @@ export const addList = async (boardId, title) => {
 };
 
 // Rename list title
-export const renameList = async (id, boardId, title) => {
+export const renameList = async (boardId, id, title) => {
   try {
     const res = await fetch(
-      `${process.env.REACT_APP_API_SERVER}/lists/rename/${id}`,
+      `${process.env.REACT_APP_API_SERVER}/lists/rename/${boardId}/${id}`,
       {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
           "x-auth-token": localStorage.getItem("token"),
-          "board-id": boardId,
+          // "board-id": boardId,
         },
         body: JSON.stringify({ title }),
       }
@@ -156,7 +178,7 @@ export const renameList = async (id, boardId, title) => {
 };
 
 // Archive/Unarchive list
-export const archiveList = async (listId, archive, boardId) => {
+export const archiveList = async (listId, archive) => {
   try {
     const res = await fetch(
       `${process.env.REACT_APP_API_SERVER}/lists/archive/${archive}/${listId}`,
@@ -165,7 +187,7 @@ export const archiveList = async (listId, archive, boardId) => {
         headers: {
           "Content-Type": "application/json",
           "x-auth-token": localStorage.getItem("token"),
-          "board-id": boardId,
+          // "board-id": boardId,
         },
       }
     );
@@ -200,14 +222,14 @@ export const getCard = async (id) => {
 };
 
 // Add card
-export const addCard = async (boardId, title, listId) => {
+export const addCard = async (title, listId) => {
   try {
     const res = await fetch(`${process.env.REACT_APP_API_SERVER}/cards`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         "x-auth-token": localStorage.getItem("token"),
-        "board-id": boardId,
+        // "board-id": boardId,
       },
       body: JSON.stringify({ title, listId }),
     });
@@ -223,7 +245,7 @@ export const addCard = async (boardId, title, listId) => {
 };
 
 // Edit card
-export const editCard = async (id, boardId, formData) => {
+export const editCard = async (id, formData) => {
   try {
     const res = await fetch(
       `${process.env.REACT_APP_API_SERVER}/cards/rename/${id}`,
@@ -232,7 +254,7 @@ export const editCard = async (id, boardId, formData) => {
         headers: {
           "Content-Type": "application/json",
           "x-auth-token": localStorage.getItem("token"),
-          "board-id": boardId,
+          // "board-id": boardId,
         },
         body: JSON.stringify(formData),
       }
@@ -249,7 +271,7 @@ export const editCard = async (id, boardId, formData) => {
 };
 
 // Move card
-export const moveCard = async (cardId, boardId, formData) => {
+export const moveCard = async (cardId, formData) => {
   try {
     const res = await fetch(
       `${process.env.REACT_APP_API_SERVER}/cards/move/${cardId}`,
@@ -258,7 +280,7 @@ export const moveCard = async (cardId, boardId, formData) => {
         headers: {
           "Content-Type": "application/json",
           "x-auth-token": localStorage.getItem("token"),
-          "board-id": boardId,
+          // "board-id": boardId,
         },
         body: JSON.stringify(formData),
       }
@@ -275,7 +297,7 @@ export const moveCard = async (cardId, boardId, formData) => {
 };
 
 // Archive/Unarchive card
-export const archiveCard = async (cardId, archive, boardId) => {
+export const archiveCard = async (cardId, archive) => {
   try {
     const res = await fetch(
       `${process.env.REACT_APP_API_SERVER}/cards/archive/${archive}/${cardId}`,
@@ -284,7 +306,7 @@ export const archiveCard = async (cardId, archive, boardId) => {
         headers: {
           "Content-Type": "application/json",
           "x-auth-token": localStorage.getItem("token"),
-          "board-id": boardId,
+          // "board-id": boardId,
         },
       }
     );
@@ -300,7 +322,7 @@ export const archiveCard = async (cardId, archive, boardId) => {
 };
 
 // Delete card
-export const deleteCard = async (listId, cardId, boardId) => {
+export const deleteCard = async (listId, cardId) => {
   try {
     const res = await fetch(
       `${process.env.REACT_APP_API_SERVER}/cards/${listId}/${cardId}`,
@@ -309,7 +331,7 @@ export const deleteCard = async (listId, cardId, boardId) => {
         headers: {
           "Content-Type": "application/json",
           "x-auth-token": localStorage.getItem("token"),
-          "board-id": boardId,
+          // "board-id": boardId,
         },
       }
     );
@@ -347,15 +369,15 @@ export const getActivity = async (boardId) => {
 };
 
 // Add member
-export const addMember = async (userId, boardId) => {
+export const addMember = async (boardId, userId) => {
   try {
     const res = await fetch(
-      `${process.env.REACT_APP_API_SERVER}/boards/add-member/${userId}`,
+      `${process.env.REACT_APP_API_SERVER}/boards/add-member/${boardId}/${userId}`,
       {
         method: "PUT",
         headers: {
           "x-auth-token": localStorage.getItem("token"),
-          "board-id": boardId,
+          // "board-id": boardId,
         },
       }
     );
@@ -371,7 +393,7 @@ export const addMember = async (userId, boardId) => {
 };
 
 // Move list
-export const moveList = async (listId, boardId, formData) => {
+export const moveList = async (listId, formData) => {
   try {
     const res = await fetch(
       `${process.env.REACT_APP_API_SERVER}/lists/move/${listId}`,
@@ -380,7 +402,7 @@ export const moveList = async (listId, boardId, formData) => {
         headers: {
           "Content-Type": "application/json",
           "x-auth-token": localStorage.getItem("token"),
-          "board-id": boardId,
+          // "board-id": boardId,
         },
         body: JSON.stringify(formData),
       }
@@ -397,7 +419,7 @@ export const moveList = async (listId, boardId, formData) => {
 };
 
 // Add card member
-export const addCardMember = async (add, cardId, userId, boardId) => {
+export const addCardMember = async (add, cardId, userId) => {
   try {
     const res = await fetch(
       `${process.env.REACT_APP_API_SERVER}/cards/add-member/${add}/${cardId}/${userId}`,
@@ -405,7 +427,7 @@ export const addCardMember = async (add, cardId, userId, boardId) => {
         method: "PUT",
         headers: {
           "x-auth-token": localStorage.getItem("token"),
-          "board-id": boardId,
+          // "board-id": boardId,
         },
       }
     );
@@ -421,7 +443,7 @@ export const addCardMember = async (add, cardId, userId, boardId) => {
 };
 
 // Add checklist item
-export const addChecklistItem = async (cardId, boardId, text) => {
+export const addChecklistItem = async (cardId, text) => {
   try {
     const res = await fetch(
       `${process.env.REACT_APP_API_SERVER}/checklists/${cardId}`,
@@ -430,7 +452,7 @@ export const addChecklistItem = async (cardId, boardId, text) => {
         headers: {
           "Content-Type": "application/json",
           "x-auth-token": localStorage.getItem("token"),
-          "board-id": boardId,
+          // "board-id": boardId,
         },
         body: JSON.stringify({ text }),
       }
@@ -447,7 +469,7 @@ export const addChecklistItem = async (cardId, boardId, text) => {
 };
 
 // Edit checklist item
-export const editChecklistItem = async (cardId, itemId, boardId, text) => {
+export const editChecklistItem = async (cardId, itemId, text) => {
   try {
     const res = await fetch(
       `${process.env.REACT_APP_API_SERVER}/checklists/${cardId}/${itemId}`,
@@ -456,7 +478,7 @@ export const editChecklistItem = async (cardId, itemId, boardId, text) => {
         headers: {
           "Content-Type": "application/json",
           "x-auth-token": localStorage.getItem("token"),
-          "board-id": boardId,
+          // "board-id": boardId,
         },
         body: JSON.stringify({ text }),
       }
@@ -473,12 +495,7 @@ export const editChecklistItem = async (cardId, itemId, boardId, text) => {
 };
 
 // Complete/Uncomplete checklist item
-export const completeChecklistItem = async (
-  cardId,
-  complete,
-  itemId,
-  boardId
-) => {
+export const completeChecklistItem = async (cardId, complete, itemId) => {
   try {
     const res = await fetch(
       `${process.env.REACT_APP_API_SERVER}/checklists/${cardId}/${complete}/${itemId}`,
@@ -486,7 +503,7 @@ export const completeChecklistItem = async (
         method: "PATCH",
         headers: {
           "x-auth-token": localStorage.getItem("token"),
-          "board-id": boardId,
+          // "board-id": boardId,
         },
       }
     );
@@ -502,7 +519,7 @@ export const completeChecklistItem = async (
 };
 
 // Delete checklist item
-export const deleteChecklistItem = async (cardId, itemId, boardId) => {
+export const deleteChecklistItem = async (cardId, itemId) => {
   try {
     const res = await fetch(
       `${process.env.REACT_APP_API_SERVER}/checklists/${cardId}/${itemId}`,
@@ -510,7 +527,7 @@ export const deleteChecklistItem = async (cardId, itemId, boardId) => {
         method: "DELETE",
         headers: {
           "x-auth-token": localStorage.getItem("token"),
-          "board-id": boardId,
+          // "board-id": boardId,
         },
       }
     );

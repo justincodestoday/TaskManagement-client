@@ -1,4 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useMutation } from "react-query";
+import { toast } from "react-toastify";
 
 import {
   TextField,
@@ -10,47 +12,78 @@ import {
 import CloseIcon from "@mui/icons-material/Close";
 
 import { addMember } from "../../api/boards";
+import getInitials from "../../utils/getInitials";
 
-const Members = () => {
+const Members = ({ board }) => {
+  const [boardData, setBoardData] = useState(board);
   const [inviting, setInviting] = useState(false);
   const [user, setUser] = useState(null);
   const [inputValue, setInputValue] = useState("");
   const [users, setUsers] = useState([]);
-  // const boardMembers = useSelector((state) => state.board.board.members);
-  // const searchOptions = users.filter((user) =>
-  //   boardMembers.find((boardMember) => boardMember.user === user._id)
-  //     ? false
-  //     : true
-  // );
-  // const dispatch = useDispatch();
+
+  const boardMembers = board.members;
+  const searchOptions = users.filter((user) =>
+    boardMembers?.find((boardMember) => boardMember.user === user._id)
+      ? false
+      : true
+  );
+
+  const mutation = useMutation(
+    ({ boardId, userId }) => addMember(boardId, userId),
+    {
+      onError: (error) => {
+        toast.error(`Error: ${error.message}`, {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: false,
+          pauseOnFocusLoss: false,
+          draggable: false,
+        });
+      },
+    }
+  );
 
   const handleInputValue = async (newInputValue) => {
     setInputValue(newInputValue);
-    // if (newInputValue && newInputValue !== "") {
-    //   const search = (
-    //     await axios.get(`/api/users/${newInputValue}`)
-    //   ).data.slice(0, 5);
-    //   setUsers(search && search.length > 0 ? search : []);
-    // }
+    if (newInputValue && newInputValue !== "") {
+      const search = await fetch(
+        `${process.env.REACT_APP_API_SERVER}/users/${newInputValue}`,
+        {
+          headers: {
+            "x-auth-token": localStorage.getItem("token"),
+          },
+        }
+      );
+      const searchData = (await search.json()).slice(0, 5);
+      setUsers(searchData && searchData.length > 0 ? searchData : []);
+    }
   };
 
-  const onSubmit = async () => {
-    // dispatch(addMember(user._id));
+  const onSubmitHandler = async () => {
+    mutation.mutate(board._id, user._id);
     setUser(null);
     setInputValue("");
     setInviting(false);
   };
 
+  useEffect(() => {
+    setBoardData(board);
+  }, [board]);
+
   return (
     <div className="board-members-wrapper">
       <div className="board-members">
-        {/* {boardMembers.map((member) => {
+        {boardMembers?.map((boardMemberId) => {
           return (
-            <Tooltip title={member.name} key={member.user}>
-              <Avatar className="avatar">{getInitials(member.name)}</Avatar>
+            <Tooltip title={boardMemberId.name} key={boardMemberId.user}>
+              <Avatar className="avatar">
+                {getInitials(boardMemberId.name)}
+              </Avatar>
             </Tooltip>
           );
-        })} */}
+        })}
       </div>
       {!inviting ? (
         <Button
@@ -69,7 +102,7 @@ const Members = () => {
             onInputChange={(e, newInputValue) =>
               handleInputValue(newInputValue)
             }
-            // options={searchOptions}
+            options={searchOptions}
             getOptionLabel={(member) => member.email}
             className="search-member"
             renderInput={(params) => (
@@ -77,6 +110,7 @@ const Members = () => {
                 {...params}
                 helperText="Search for user by email"
                 autoFocus
+                sx={{ backgroundColor: "#fff" }}
               />
             )}
           />
@@ -85,7 +119,7 @@ const Members = () => {
               disabled={!user}
               variant="contained"
               color="primary"
-              onClick={onSubmit}
+              onClick={() => onSubmitHandler()}
             >
               Add Member
             </Button>
