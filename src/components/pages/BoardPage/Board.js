@@ -1,19 +1,21 @@
 import React, { Fragment, useState, useEffect } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { DragDropContext, Droppable } from "react-beautiful-dnd";
-import { useQuery, useMutation } from "react-query";
+import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
+import { useQuery, useQueryClient, useMutation } from "react-query";
 import { RotatingLines } from "react-loader-spinner";
 
 import { Disclosure, Menu, Transition } from "@headlessui/react";
 import { Bars3Icon, BellIcon, XMarkIcon } from "@heroicons/react/24/outline";
+import { Box } from "@mui/material";
 
+import "./Board.css";
 import { checkAuth, logout } from "../../../api/users";
 import { getBoard, moveCard, moveList } from "../../../api/boards";
-// import BoardTitle from "../board/BoardTitle";
-// import BoardDrawer from "../board/BoardDrawer";
-// import List from "../list/List";
-// import CreateList from "../board/CreateList";
-// import Members from "../board/Members";
+import BoardTitle from "../../board/BoardTitle";
+import BoardDrawer from "../../board/BoardDrawer";
+import List from "../../list/List";
+import CreateList from "../../board/CreateList";
+import Members from "../../board/Members";
 
 // const user = {
 //   name: "Tom Cook",
@@ -41,17 +43,42 @@ const classNames = (...classes) => {
   return classes.filter(Boolean).join(" ");
 };
 
-export const Board = ({ match }) => {
+export const Board = () => {
   const [board, setBoard] = useState([]);
-  const navigate = useNavigate();
+  const [error, setError] = useState([]);
+
   const { isAuth, user } = checkAuth();
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const { id } = useParams();
 
   const mutation = useMutation((id) => getBoard(id), {
+    onError: (error) => {
+      setError(error);
+    },
+
     onSuccess: (data) => {
       setBoard(data);
     },
   });
+
+  const moveCardMutation = useMutation(
+    ({ cardId, formData }) => moveCard(cardId, formData),
+    {
+      onSuccess: (data) => {
+        queryClient.invalidateQueries(["cards"]);
+      },
+    }
+  );
+
+  const moveListMutation = useMutation(
+    ({ listId, formData }) => moveList(listId, formData),
+    {
+      onSuccess: (data) => {
+        queryClient.invalidateQueries(["lists"]);
+      },
+    }
+  );
 
   useEffect(() => {
     mutation.mutate(id);
@@ -61,8 +88,48 @@ export const Board = ({ match }) => {
     if (board?.title) document.title = "Weekee | " + board.title;
   }, [board?.title]);
 
-  return (
-    <>
+  const onDragEnd = (result) => {
+    const { source, destination, draggableId, type } = result;
+    if (!destination) {
+      return;
+    }
+
+    const fromId = source.droppableId;
+    const toId = destination.droppableId;
+    const toIndex = destination.index;
+
+    if (type === "card") {
+      moveCardMutation.mutate(draggableId, { fromId, toId, toIndex });
+    } else {
+      moveListMutation.mutate(draggableId, { toIndex });
+    }
+  };
+
+  return !board ? (
+    <Fragment>
+      <Box className="board-loading">
+        <RotatingLines
+          strokeColor="grey"
+          strokeWidth="5"
+          animationDuration="0.75"
+          width="96"
+          visible={true}
+        />
+        <h2>Error: {error}</h2>
+      </Box>
+    </Fragment>
+  ) : (
+    <div
+      className="board-and-navbar"
+      style={{
+        backgroundImage:
+          "url(" +
+          (board.backgroundURL
+            ? board.backgroundURL
+            : "https://images.unsplash.com/photo-1598197748967-b4674cb3c266?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=2689&q=80") +
+          ")",
+      }}
+    >
       <div className="min-h-full">
         <Disclosure as="nav" className="bg-gray-800">
           {({ open }) => (
@@ -257,29 +324,18 @@ export const Board = ({ match }) => {
             </>
           )}
         </Disclosure>
+
         {/* Replace with your content */}
-        <div
-          className="board-and-navbar"
-          style={{
-            backgroundImage:
-              "url(" +
-              (board.backgroundURL
-                ? board.backgroundURL
-                : "https://images.unsplash.com/photo-1598197748967-b4674cb3c266?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=2689&q=80") +
-              ")",
-          }}
-        >
+        <div>
           <section className="board">
             <div className="board-top">
               <div className="board-top-left">
-                {/* <BoardTitle board={board} /> */}
-                {/* <Members /> */}
+                <BoardTitle board={board} />
+                <Members />
               </div>
-              {/* <BoardDrawer /> */}
+              <BoardDrawer />
             </div>
-            <DragDropContext
-            // onDragEnd={onDragEnd}
-            >
+            <DragDropContext onDragEnd={onDragEnd}>
               <Droppable
                 droppableId="all-lists"
                 direction="horizontal"
@@ -291,12 +347,18 @@ export const Board = ({ match }) => {
                     ref={provided.innerRef}
                     {...provided.droppableProps}
                   >
-                    {board.lists.map((listId, index) => (
-                      <h1>{listId}</h1>
-                      // <List key={listId} listId={listId} index={index} />
-                    ))}
+                    <span className="text-white">
+                      <h1>{board._id}</h1>
+                      {board?.lists?.map((listId) => (
+                        <h1 key={listId}>{listId}</h1>
+                      ))}
+                    </span>
+
+                    {/* {board?.lists?.map((listId, index) => (
+                      <List key={listId.id} listId={listId} index={index} />
+                    ))} */}
                     {provided.placeholder}
-                    {/* <CreateList /> */}
+                    <CreateList />
                   </div>
                 )}
               </Droppable>
@@ -305,6 +367,6 @@ export const Board = ({ match }) => {
         </div>
         {/* /End replace */}
       </div>
-    </>
+    </div>
   );
 };

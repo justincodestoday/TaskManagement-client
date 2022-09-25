@@ -1,0 +1,45 @@
+.board-loading {
+  text-align: center;
+  margin-top: 20%;
+}
+
+.board-and-navbar {
+  background-size: cover;
+  height: 100vh;
+}
+
+/* .board {
+  padding: 5px;
+} */
+
+.board .board-top {
+  padding: 5px;
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.board .board-top .board-top-left {
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: row;
+}
+
+.board .lists {
+  display: flex;
+  flex-direction: row;
+  overflow-x: auto;
+}
+
+@media (min-height: 600px) and (min-width: 1000px) {
+  .board .lists {
+    min-height: 83vh;
+  }
+}
+
+@media (min-height: 960px) {
+  .board .lists {
+    min-height: 88vh;
+  }
+}
