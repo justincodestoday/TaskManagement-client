@@ -4,6 +4,7 @@ import { Draggable, Droppable } from "react-beautiful-dnd";
 import { useQuery, useQueryClient, useMutation } from "react-query";
 
 import { Button } from "@mui/material";
+import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 
 import { getList } from "../../api/boards";
 import ListTitle from "./ListTitle";
@@ -16,7 +17,7 @@ const List = ({ listId, index, board }) => {
   const [list, setList] = useState({});
   const queryClient = useQueryClient();
 
-  const mutation = useMutation((id) => getList(id), {
+  const mutation = useMutation(({ id }) => getList(id), {
     onSuccess: (data) => {
       queryClient.invalidateQueries(["lists"]);
       setList(data);
@@ -24,7 +25,7 @@ const List = ({ listId, index, board }) => {
   });
 
   useEffect(() => {
-    mutation.mutate(listId);
+    mutation.mutate({ id: listId });
   }, [listId]);
 
   const createCardFormRef = useRef(null);
@@ -45,7 +46,7 @@ const List = ({ listId, index, board }) => {
         >
           <div className="list-top">
             <ListTitle list={list} board={board} />
-            {/* <ListMenu listId={listId} /> */}
+            <ListMenu list={list} listId={listId} board={board} />
           </div>
           <Droppable droppableId={listId} type="card">
             {(provided) => (
@@ -56,7 +57,7 @@ const List = ({ listId, index, board }) => {
                 {...provided.droppableProps}
                 ref={provided.innerRef}
               >
-                {/* <div className="cards">
+                <div className="cards">
                   {list?.cards?.map((cardId, index) => (
                     <Card
                       key={cardId}
@@ -65,11 +66,15 @@ const List = ({ listId, index, board }) => {
                       index={index}
                     />
                   ))}
-                </div> */}
+                </div>
                 {provided.placeholder}
                 {addingCard && (
                   <div ref={createCardFormRef}>
-                    <CreateCardForm listId={listId} setAdding={setAddingCard} />
+                    <CreateCardForm
+                      listId={listId}
+                      board={board}
+                      setAdding={setAddingCard}
+                    />
                   </div>
                 )}
               </div>
@@ -78,7 +83,7 @@ const List = ({ listId, index, board }) => {
           {!addingCard && (
             <div className="create-card-button">
               <Button variant="contained" onClick={() => setAddingCard(true)}>
-                + Add a card
+                <AddCircleOutlineIcon /> Add a card
               </Button>
             </div>
           )}

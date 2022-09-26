@@ -1,7 +1,8 @@
 import React, { Fragment, useRef, useState, useEffect } from "react";
-import { useSelector, useDispatch } from "react-redux";
 import PropTypes from "prop-types";
 import { Draggable } from "react-beautiful-dnd";
+import { useQuery, useQueryClient, useMutation } from "react-query";
+import { toast } from "react-toastify";
 
 import CardMUI from "@mui/material/Card";
 import EditIcon from "@mui/icons-material/Edit";
@@ -12,7 +13,7 @@ import { TextField, CardContent, Button, Avatar, Tooltip } from "@mui/material";
 
 import CardModal from "./CardModal";
 import { getCard, editCard } from "../../api/boards";
-// import getInitials from "../../utils/getInitials";
+import getInitials from "../../utils/getInitials";
 
 const Card = ({ cardId, list, index }) => {
   const [editing, setEditing] = useState(false);
@@ -21,15 +22,9 @@ const Card = ({ cardId, list, index }) => {
   const [title, setTitle] = useState("");
   const [height, setHeight] = useState(0);
   const [completeItems, setCompleteItems] = useState(0);
+  const [card, setCard] = useState({});
   const cardRef = useRef(null);
-  const card = useSelector((state) =>
-    state.board.board.cardObjects.find((object) => object._id === cardId)
-  );
-  const dispatch = useDispatch();
-
-  useEffect(() => {
-    dispatch(getCard(cardId));
-  }, [cardId, dispatch]);
+  const queryClient = useQueryClient();
 
   useEffect(() => {
     if (card) {
@@ -44,13 +39,53 @@ const Card = ({ cardId, list, index }) => {
     }
   }, [card]);
 
+  const mutation = useMutation(({ id }) => getCard(id), {
+    onSuccess: (data) => {
+      queryClient.invalidateQueries(["cards"]);
+      setCard(data);
+    },
+  });
+
+  useEffect(() => {
+    mutation.mutate({ id: cardId });
+  }, [cardId]);
+
+  const editCardMutation = useMutation(({ id, title }) => editCard(id, title), {
+    onError: (error) => {
+      toast.error(`Error: ${error.message}`, {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: false,
+        pauseOnFocusLoss: false,
+        draggable: false,
+      });
+    },
+
+    onSuccess: (data) => {
+      queryClient.invalidateQueries(["cards"]);
+
+      toast.success(`Success: ${data.message}`, {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: false,
+        pauseOnFocusLoss: false,
+        draggable: false,
+      });
+    },
+  });
+
   useEffect(() => {
     cardRef && cardRef.current && setHeight(cardRef.current.clientHeight);
   }, [list, card, cardRef]);
 
   const onSubmitEdit = async (e) => {
     e.preventDefault();
-    dispatch(editCard(cardId, { title }));
+    editCardMutation.mutate({ id: cardId, title: title });
+    console.log(title);
     setEditing(false);
     setMouseOver(false);
   };
@@ -59,13 +94,13 @@ const Card = ({ cardId, list, index }) => {
     ""
   ) : (
     <Fragment>
-      <CardModal
+      {/* <CardModal
         cardId={cardId}
         open={openModal}
         setOpen={setOpenModal}
         card={card}
         list={list}
-      />
+      /> */}
       {!editing ? (
         <Draggable draggableId={cardId} index={index}>
           {(provided) => (
@@ -129,11 +164,11 @@ const Card = ({ cardId, list, index }) => {
                     )}
                   </div>
                   <div className="card-member-avatars">
-                    {card.members.map((member) => {
+                    {card?.members?.map((member) => {
                       return (
                         <Tooltip title={member.name} key={member.user}>
                           <Avatar className="avatar">
-                            {/* {getInitials(member.name)} */}
+                            {getInitials(member.name)}
                           </Avatar>
                         </Tooltip>
                       );
@@ -166,10 +201,11 @@ const Card = ({ cardId, list, index }) => {
               Save
             </Button>
             <Button
-              onClick={() => {
+              onClick={(e) => {
                 setEditing(false);
                 setMouseOver(false);
-                setTitle(card.title);
+                // setTitle(card.title);
+                setTitle(e.target.value);
               }}
             >
               <CloseIcon />
@@ -181,10 +217,10 @@ const Card = ({ cardId, list, index }) => {
   );
 };
 
-Card.propTypes = {
-  cardId: PropTypes.string.isRequired,
-  list: PropTypes.object.isRequired,
-  index: PropTypes.number.isRequired,
-};
+// Card.propTypes = {
+//   cardId: PropTypes.string.isRequired,
+//   list: PropTypes.object.isRequired,
+//   index: PropTypes.number.isRequired,
+// };
 
 export default Card;

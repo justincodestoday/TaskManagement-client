@@ -58,8 +58,7 @@ export const Board = () => {
     },
 
     onSuccess: (data) => {
-      queryClient.invalidateQueries(["cards"]);
-      queryClient.invalidateQueries(["lists"]);
+      queryClient.invalidateQueries(["boards", "lists", "cards"]);
       setBoard(data);
     },
   });
@@ -358,7 +357,7 @@ export const Board = () => {
                       />
                     ))}
                     {provided.placeholder}
-                    <CreateList />
+                    <CreateList board={board} />
                   </div>
                 )}
               </Droppable>

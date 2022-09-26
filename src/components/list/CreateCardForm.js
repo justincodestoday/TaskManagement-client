@@ -1,31 +1,67 @@
 import React, { useRef, useState, useEffect } from "react";
 import PropTypes from "prop-types";
+import { useQuery, useQueryClient, useMutation } from "react-query";
+import { toast } from "react-toastify";
 
 import { Card, CardContent, TextField, Button } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 
 import { addCard } from "../../api/boards";
 
-const CreateCardForm = ({ listId, setAdding }) => {
+const CreateCardForm = ({ listId, setAdding, board }) => {
   const [title, setTitle] = useState("");
-  // const dispatch = useDispatch();
+  const queryClient = useQueryClient();
+
+  const mutation = useMutation(
+    ({ title, listId, boardId }) => addCard(title, listId, boardId),
+    {
+      onError: (error) => {
+        toast.error(`Error: ${error.message}`, {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: false,
+          pauseOnFocusLoss: false,
+          draggable: false,
+        });
+      },
+
+      onSuccess: (data) => {
+        queryClient.invalidateQueries(["cards"]);
+
+        toast.success(`Success: ${data.message}`, {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: false,
+          pauseOnFocusLoss: false,
+          draggable: false,
+        });
+      },
+    }
+  );
+
+  console.log({ title, listId: listId, boardId: board._id });
 
   const formRef = useRef(null);
   useEffect(() => {
     formRef && formRef.current && formRef.current.scrollIntoView();
   }, [title]);
 
-  const onSubmit = async (e) => {
+  const onSubmitHandler = async (e) => {
     e.preventDefault();
-    // dispatch(addCard({ title, listId }));
+    mutation.mutate({ title, listId: listId, boardId: board._id });
     setTitle("");
+    setAdding(false);
   };
 
   return (
     <form
       ref={formRef}
       className="create-card-form"
-      onSubmit={(e) => onSubmit(e)}
+      onSubmit={(e) => onSubmitHandler(e)}
     >
       <Card>
         <CardContent className="card-edit-content">
@@ -38,7 +74,7 @@ const CreateCardForm = ({ listId, setAdding }) => {
             autoFocus
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            onKeyPress={(e) => e.key === "Enter" && onSubmit(e)}
+            onKeyPress={(e) => e.key === "Enter" && onSubmitHandler(e)}
           />
         </CardContent>
       </Card>

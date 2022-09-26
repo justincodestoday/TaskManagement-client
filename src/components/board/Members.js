@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useMutation } from "react-query";
+import { useMutation, useQueryClient } from "react-query";
 import { toast } from "react-toastify";
 
 import {
@@ -20,6 +20,7 @@ const Members = ({ board }) => {
   const [user, setUser] = useState(null);
   const [inputValue, setInputValue] = useState("");
   const [users, setUsers] = useState([]);
+  const queryClient = useQueryClient();
 
   const boardMembers = board.members;
   const searchOptions = users.filter((user) =>
@@ -33,6 +34,20 @@ const Members = ({ board }) => {
     {
       onError: (error) => {
         toast.error(`Error: ${error.message}`, {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: false,
+          pauseOnFocusLoss: false,
+          draggable: false,
+        });
+      },
+
+      onSuccess: (data) => {
+        queryClient.invalidateQueries(["boards"]);
+
+        toast.success(`Success: ${data.message}`, {
           position: "top-right",
           autoClose: 3000,
           hideProgressBar: false,
@@ -62,7 +77,7 @@ const Members = ({ board }) => {
   };
 
   const onSubmitHandler = async () => {
-    mutation.mutate(board._id, user._id);
+    mutation.mutate({ boardId: board._id, userId: user._id });
     setUser(null);
     setInputValue("");
     setInviting(false);

@@ -1,6 +1,6 @@
 import React, { Fragment, useState, useEffect } from "react";
 import PropTypes from "prop-types";
-import { moveList } from "../../api/boards";
+import { useQuery, useQueryClient, useMutation } from "react-query";
 
 import {
   Button,
@@ -14,19 +14,15 @@ import {
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 
-const MoveList = ({ listId, closeMenu }) => {
-  // const classes = useStyles();
-  // need to fix this
-  const classes = "hi";
+import { moveList } from "../../api/boards";
+
+const MoveList = ({ listData, listId, board, closeMenu }) => {
   const [openDialog, setOpenDialog] = useState(false);
   const [position, setPosition] = useState(0);
   const [positions, setPositions] = useState([0]);
-  // const lists = useSelector((state) => state.board.board.lists);
-  const lists = "";
-  const listObjects = "";
-  // const listObjects = useSelector((state) => state.board.board.listObjects);
-  // const dispatch = useDispatch();
-  const dispatch = "";
+  const lists = board.lists;
+  const listObjects = listData;
+  const queryClient = useQueryClient();
 
   useEffect(() => {
     const mappedListObjects = listObjects
@@ -46,8 +42,14 @@ const MoveList = ({ listId, closeMenu }) => {
     );
   }, [lists, listId, listObjects]);
 
-  const onSubmit = async () => {
-    dispatch(moveList(listId, { toIndex: position }));
+  const mutation = useMutation(({ id, toIndex }) => moveList(id, toIndex), {
+    onSuccess: (data) => {
+      queryClient.invalidateQueries(["lists"]);
+    },
+  });
+
+  const onSubmitHandler = async () => {
+    mutation.mutate({ listId, toIndex: position });
     setOpenDialog(false);
     closeMenu();
   };
@@ -56,13 +58,13 @@ const MoveList = ({ listId, closeMenu }) => {
     <Fragment>
       <div onClick={() => setOpenDialog(true)}>Move This List</div>
       <Dialog open={openDialog} onClose={() => setOpenDialog(false)}>
-        <div className={classes.moveListTop}>
+        <div className="flex">
           <DialogTitle>{"Move List"}</DialogTitle>
           <Button onClick={() => setOpenDialog(false)}>
             <CloseIcon />
           </Button>
         </div>
-        <DialogActions className={classes.moveListBottom}>
+        <DialogActions className="flex flex-col">
           <FormControl>
             <InputLabel shrink>Position</InputLabel>
             <Select
@@ -81,8 +83,8 @@ const MoveList = ({ listId, closeMenu }) => {
               type="submit"
               variant="contained"
               color="primary"
-              className={classes.moveListButton}
-              onClick={onSubmit}
+              className="mt-5"
+              onClick={onSubmitHandler}
             >
               Move List
             </Button>

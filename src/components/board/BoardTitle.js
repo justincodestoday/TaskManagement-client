@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
-import { useMutation } from "react-query";
+import { useMutation, useQueryClient } from "react-query";
 import { toast } from "react-toastify";
 
 import { TextField } from "@mui/material";
@@ -9,16 +9,12 @@ import { renameBoard } from "../../api/boards";
 
 const BoardTitle = ({ board }) => {
   const [editing, setEditing] = useState(false);
-  const [boardId, setBoardId] = useState(board._id);
   const [title, setTitle] = useState(board.title);
+  const queryClient = useQueryClient();
 
   useEffect(() => {
     setTitle(board.title);
   }, [board.title]);
-
-  useEffect(() => {
-    setBoardId(board._id);
-  }, [board._id]);
 
   const mutation = useMutation(
     ({ boardId, title }) => renameBoard(boardId, title),
@@ -36,6 +32,8 @@ const BoardTitle = ({ board }) => {
       },
 
       onSuccess: (data) => {
+        queryClient.invalidateQueries(["boards"]);
+
         toast.success(`Success: ${data.message}`, {
           position: "top-right",
           autoClose: 3000,
@@ -51,7 +49,7 @@ const BoardTitle = ({ board }) => {
 
   const onSubmitHandler = async (e) => {
     e.preventDefault();
-    mutation.mutate({ boardId, title });
+    mutation.mutate({ boardId: board._id, title });
     setEditing(false);
   };
 

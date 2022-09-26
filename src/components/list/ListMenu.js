@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import PropTypes from "prop-types";
+import { useQuery, useQueryClient, useMutation } from "react-query";
 
 import { Button, Menu, MenuItem } from "@mui/material";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
@@ -7,10 +8,15 @@ import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import { archiveList } from "../../api/boards";
 import MoveList from "./MoveList";
 
-const ListMenu = ({ listId }) => {
+const ListMenu = ({ list, listId, board }) => {
   const [anchorEl, setAnchorEl] = useState(null);
-  // const dispatch = useDispatch();
-  const dispatch = "";
+  const queryClient = useQueryClient();
+
+  const mutation = useMutation(({ id, archive }) => archiveList(id, archive), {
+    onSuccess: (data) => {
+      queryClient.invalidateQueries(["lists"]);
+    },
+  });
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -20,8 +26,8 @@ const ListMenu = ({ listId }) => {
     setAnchorEl(null);
   };
 
-  const archive = async () => {
-    dispatch(archiveList(listId, true));
+  const onSubmitHandler = async () => {
+    mutation.mutate({ id: listId, archive: true });
   };
 
   return (
@@ -40,14 +46,19 @@ const ListMenu = ({ listId }) => {
         </MenuItem>
         <MenuItem
           onClick={() => {
-            archive();
+            onSubmitHandler();
             handleClose();
           }}
         >
           Archive This List
         </MenuItem>
         <MenuItem>
-          <MoveList listId={listId} closeMenu={handleClose} />
+          {/* <MoveList
+            listData={list}
+            listId={listId}
+            board={board}
+            closeMenu={handleClose}
+          /> */}
         </MenuItem>
       </Menu>
     </div>

@@ -25,7 +25,7 @@ const CreateBoard = () => {
 
   const queryClient = useQueryClient();
 
-  const mutation = useMutation((title) => addBoard(title), {
+  const mutation = useMutation(({ title }) => addBoard(title), {
     onError: (error) => {
       toast.error(`Error: ${error.message}`, {
         position: "top-right",
@@ -55,7 +55,7 @@ const CreateBoard = () => {
 
   const onSubmitHandler = async (e) => {
     e.preventDefault();
-    mutation.mutate(title);
+    mutation.mutate({ title });
     setOpen(false);
   };
 

@@ -129,17 +129,20 @@ export const getList = async (id) => {
 };
 
 // Add list
-export const addList = async (title) => {
+export const addList = async (title, boardId) => {
   try {
-    const res = await fetch(`${process.env.REACT_APP_API_SERVER}/lists`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "x-auth-token": localStorage.getItem("token"),
-        // "board-id": boardId,
-      },
-      body: JSON.stringify({ title }),
-    });
+    const res = await fetch(
+      `${process.env.REACT_APP_API_SERVER}/lists/${boardId}`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-auth-token": localStorage.getItem("token"),
+          // "board-id": boardId,
+        },
+        body: JSON.stringify({ title }),
+      }
+    );
     const data = await res.json();
     if (res.ok) {
       return data;
@@ -193,11 +196,14 @@ export const archiveList = async (listId, archive) => {
     );
     const data = await res.json();
     if (res.ok) {
+      console.log("ok");
       return data;
     } else {
+      console.log("not ok", listId, archive);
       throw new Error(data.message);
     }
   } catch (err) {
+    console.log("bad");
     throw new Error(err.message);
   }
 };
@@ -222,17 +228,20 @@ export const getCard = async (id) => {
 };
 
 // Add card
-export const addCard = async (title, listId) => {
+export const addCard = async (title, listId, boardId) => {
   try {
-    const res = await fetch(`${process.env.REACT_APP_API_SERVER}/cards`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "x-auth-token": localStorage.getItem("token"),
-        // "board-id": boardId,
-      },
-      body: JSON.stringify({ title, listId }),
-    });
+    const res = await fetch(
+      `${process.env.REACT_APP_API_SERVER}/cards/${boardId}`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-auth-token": localStorage.getItem("token"),
+          // "board-id": boardId,
+        },
+        body: JSON.stringify({ title, listId }),
+      }
+    );
     const data = await res.json();
     if (res.ok) {
       return data;
@@ -247,6 +256,7 @@ export const addCard = async (title, listId) => {
 // Edit card
 export const editCard = async (id, formData) => {
   try {
+    // const { title, description, label } = formData;
     const res = await fetch(
       `${process.env.REACT_APP_API_SERVER}/cards/rename/${id}`,
       {
@@ -256,11 +266,13 @@ export const editCard = async (id, formData) => {
           "x-auth-token": localStorage.getItem("token"),
           // "board-id": boardId,
         },
-        body: JSON.stringify(formData),
+        // body: JSON.stringify({ title, description, label }),
+        body: JSON.stringify({ formData }),
       }
     );
     const data = await res.json();
     if (res.ok) {
+      console.log(data);
       return data;
     } else {
       throw new Error(data.message);

@@ -85,6 +85,27 @@
   background-color: #ddd;
 }
 
+.board .create-list-button {
+  margin-top: 10px;
+  min-width: 200px;
+}
+
+.board .create-list-form {
+  min-width: 280px;
+  padding: 0 10px 10px;
+  margin-top: 10px;
+  height: fit-content;
+  background-color: #eee;
+  border-radius: 5px;
+  display: flex;
+  flex-direction: column;
+}
+
+.board .archived-card {
+  display: flex;
+  flex-direction: column;
+}
+
 .board .lists {
   display: flex;
   flex-direction: row;
