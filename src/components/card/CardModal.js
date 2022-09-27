@@ -34,8 +34,6 @@ const CardModal = ({ cardId, open, setOpen, card, list, board }) => {
     setDescription(card.description);
   }, [card]);
 
-  console.log(card);
-
   const mutation = useMutation(
     ({ id, archive, boardId }) => archiveCard(id, archive, boardId),
     {

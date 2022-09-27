@@ -374,7 +374,7 @@ export const Board = () => {
                 <BoardTitle board={board} />
                 <Members board={board} />
               </div>
-              <BoardDrawer board={board} />
+              <BoardDrawer board={board} lists={lists} />
             </div>
 
             <DragDropContext onDragEnd={onDragEnd}>

@@ -1,16 +1,50 @@
 import React from "react";
-import { useSelector, useDispatch } from "react-redux";
+import { useQuery, useQueryClient, useMutation } from "react-query";
+import { toast } from "react-toastify";
 
 import { Button, List, ListItem, ListItemText } from "@mui/material";
+import { createTheme, ThemeProvider } from "@mui/material/styles";
 
 import { archiveList } from "../../api/boards";
 
-const ArchivedLists = () => {
-  const listObjects = useSelector((state) => state.board.board.listObjects);
-  const dispatch = useDispatch();
+const theme = createTheme({
+  palette: {
+    primary: {
+      light: "#757ce8",
+      main: "#3f50b5",
+      dark: "#002884",
+      contrastText: "#fff",
+    },
+  },
+});
+
+const ArchivedLists = ({ board, lists }) => {
+  const queryClient = useQueryClient();
+  const listObjects = lists;
+
+  const mutation = useMutation(
+    ({ id, archive, boardId }) => archiveList(id, archive, boardId),
+    {
+      onError: (error) => {
+        toast.error(`Error: ${error.message}`, {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: false,
+          pauseOnFocusLoss: false,
+          draggable: false,
+        });
+      },
+
+      onSuccess: (data) => {
+        queryClient.invalidateQueries(["lists"]);
+      },
+    }
+  );
 
   const onSubmit = async (listId) => {
-    dispatch(archiveList(listId, false));
+    mutation.mutate({ id: listId, archive: false, boardId: board._id });
   };
 
   return (

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-// import Moment from "react-moment";
+import Moment from "react-moment";
 
 import {
   Drawer,
@@ -9,6 +9,7 @@ import {
   ListItemText,
   Divider,
   Button,
+  Typography,
 } from "@mui/material";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 
@@ -31,13 +32,12 @@ const theme = createTheme({
   },
 });
 
-const BoardDrawer = () => {
-  // const classes = useStyles();
+const BoardDrawer = ({ board, lists }) => {
   const [open, setOpen] = useState(false);
   const [viewingArchivedLists, setViewingArchivedLists] = useState(false);
   const [viewingArchivedCards, setViewingArchivedCards] = useState(false);
   const [activityChunks, setActivityChunks] = useState(1);
-  // const activity = useSelector((state) => state.board.board.activity);
+  const activity = board.activity;
 
   const handleClose = () => {
     setOpen(false);
@@ -50,29 +50,29 @@ const BoardDrawer = () => {
         <Button
           onClick={() => setOpen(true)}
           variant="contained"
-          // className={open ? classes.hide : classes.showMenuButton}
+          //   className={open ? "hidden" : "flex justify-between w-40"}
         >
           <MoreHorizIcon fontSize="small" /> Show Menu
         </Button>
       </ThemeProvider>
       <Drawer
-        // className={open ? classes.drawer : classes.hide}
+        // className={open ? "w-80 shrink-0" : "hidden"}
         variant="persistent"
         anchor="right"
         open={open}
-        // classes={{
-        //   paper: classes.drawerPaper,
-        // }}
+        // classes="w-80"
       >
         {!viewingArchivedLists && !viewingArchivedCards ? (
           <div>
-            <div
-            // className={classes.drawerHeader}
-            >
-              <h3>Menu</h3>
-              <Button onClick={handleClose}>
-                <CloseIcon />
-              </Button>
+            <div className="flex items-center py-2.5 px-5 justify-between">
+              <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+                Menu
+              </Typography>
+              <ThemeProvider theme={theme}>
+                <Button onClick={handleClose}>
+                  <CloseIcon />
+                </Button>
+              </ThemeProvider>
             </div>
             <Divider />
             <List>
@@ -90,37 +90,35 @@ const BoardDrawer = () => {
               </ListItem>
             </List>
             <Divider />
-            <div
-            // className={classes.activityTitle}
-            >
-              <h3>Activity</h3>
+            <div className="pt-5 px-5">
+              <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+                Activity
+              </Typography>
             </div>
             <List>
-              {/* {activity.slice(0, activityChunks * 10).map((activity) => (
+              {activity.slice(0, activityChunks * 10).map((activity) => (
                 <ListItem key={activity._id}>
                   <ListItemText
                     primary={activity.text}
                     secondary={<Moment fromNow>{activity.date}</Moment>}
                   />
                 </ListItem>
-              ))} */}
+              ))}
             </List>
-            <div
-            // className={classes.viewMoreActivityButton}
-            >
-              <Button
-              // disabled={activityChunks * 10 > activity.length}
-              // onClick={() => setActivityChunks(activityChunks + 1)}
-              >
-                View More Activity
-              </Button>
+            <div className="mb-5 mx-auto">
+              <ThemeProvider theme={theme}>
+                <Button
+                  disabled={activityChunks * 10 > activity.length}
+                  onClick={() => setActivityChunks(activityChunks + 1)}
+                >
+                  View More Activity
+                </Button>
+              </ThemeProvider>
             </div>
           </div>
         ) : viewingArchivedLists ? (
           <div>
-            <div
-            // className={classes.drawerHeader}
-            >
+            <div className="flex items-center py-2.5 px-5 justify-between">
               <Button onClick={() => setViewingArchivedLists(false)}>
                 <ChevronLeftIcon />
               </Button>
@@ -130,13 +128,11 @@ const BoardDrawer = () => {
               </Button>
             </div>
             <Divider />
-            <ArchivedLists />
+            <ArchivedLists board={board} lists={lists} />
           </div>
         ) : (
           <div>
-            <div
-            // className={classes.drawerHeader}
-            >
+            <div className="flex items-center py-2.5 px-5 justify-between">
               <Button onClick={() => setViewingArchivedCards(false)}>
                 <ChevronLeftIcon />
               </Button>
@@ -146,7 +142,7 @@ const BoardDrawer = () => {
               </Button>
             </div>
             <Divider />
-            <ArchivedCards />
+            <ArchivedCards board={board} lists={lists} />
           </div>
         )}
         <Divider />
