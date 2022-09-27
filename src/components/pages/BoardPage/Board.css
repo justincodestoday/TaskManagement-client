@@ -1,345 +1,338 @@
-.board-loading {
-    text-align: center;
-    margin-top: 20%;
+.board {
+  padding: 10px;
 }
-
-.board-and-navbar {
-    background-size: cover;
-    height: 100vh;
-}
-
-/* .board {
-  padding: 5px;
-} */
 
 .board .board-top {
-    padding: 5px;
-    display: flex;
-    flex-wrap: wrap;
-    flex-direction: row;
-    justify-content: space-between;
+  padding: 5px 0px 5px;
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: row;
+  justify-content: space-between;
 }
 
 .board .board-top .board-top-left {
-    display: flex;
-    flex-wrap: wrap;
-    flex-direction: row;
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: row;
 }
 
 @media (max-width: 960px) {
-    .board .board-top .board-top-left {
-        flex-direction: column;
-    }
+  .board .board-top .board-top-left {
+    flex-direction: column;
+  }
 }
 
 .board .board-top .board-top-left .board-title {
-    cursor: pointer;
-    color: snow;
-    /* padding: 5px 0 0 5px; */
-    padding: 10px;
-    border-radius: 10px;
-    max-width: 500px;
-    white-space: nowrap;
-    overflow: hidden;
-    font-size: x-large;
-    font-weight: bold;
-    background-color: dimgray;
+  cursor: pointer;
+  color: snow;
+  padding: 5px 0px 5px;
+  min-width: 280px;
+  max-width: 500px;
+  border-radius: 10px;
+  white-space: nowrap;
+  overflow: hidden;
+  font-size: x-large;
+  font-weight: bold;
+  background-color: rgb(31 41 55);
 }
 
 .board .board-top .board-top-left .board-title-form {
-    background-color: snow;
+  border-radius: 10px;
+  background-color: snow;
 }
 
 .board .board-top .board-top-left .board-members-wrapper {
-    display: flex;
-    flex-wrap: wrap;
-    margin: 0 20px;
+  display: flex;
+  flex-wrap: wrap;
+  margin: 0 20px;
 }
 
 @media (max-width: 960px) {
-    .board .board-top .board-top-left .board-members-wrapper {
-        margin: 20px 20px 20px 0;
-    }
+  .board .board-top .board-top-left .board-members-wrapper {
+    margin: 20px 20px 20px 0;
+  }
 }
 
 .board .board-top .board-top-left .board-members-wrapper .board-members {
-    display: flex;
-    flex-wrap: wrap;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
 }
 
 .board .board-top .board-top-left .invite {
-    margin-left: 10px;
-    display: flex;
-    flex-wrap: wrap;
+  margin-left: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
 }
 
 .board .board-top .board-top-left .invite .search-member {
-    width: 250px;
-    margin-right: 10px;
-    height: 2.5rem;
+  width: 250px;
+  margin-right: 10px;
+  height: 2.5rem;
 }
 
 .board .avatar {
-    margin-right: 2px;
-    color: darkslategrey;
-    cursor: default;
-    background-color: #eee;
+  margin-right: 2px;
+  color: darkslategrey;
+  cursor: default;
+  background-color: #eee;
 }
 
 .board .avatar:hover {
-    background-color: #ddd;
+  background-color: #ddd;
 }
 
-.board .create-list-button {
-    margin-top: 10px;
-    min-width: 200px;
-}
+/* .board .create-list-button {
+  margin-top: 10px;
+  min-width: 200px;
+} */
 
 .board .create-list-form {
-    min-width: 280px;
-    padding: 0 10px 10px;
-    margin-top: 10px;
-    height: fit-content;
-    background-color: #eee;
-    border-radius: 5px;
-    display: flex;
-    flex-direction: column;
+  min-width: 280px;
+  padding: 0 10px 10px;
+  margin-top: 10px;
+  height: fit-content;
+  background-color: #eee;
+  border-radius: 5px;
+  display: flex;
+  flex-direction: column;
 }
 
 .board .archived-card {
-    display: flex;
-    flex-direction: column;
+  display: flex;
+  flex-direction: column;
 }
 
 .board .lists {
-    display: flex;
-    flex-direction: row;
-    overflow-x: auto;
+  display: flex;
+  flex-direction: row;
+  overflow-x: auto;
 }
 
 @media (min-height: 600px) and (min-width: 1000px) {
-    .board .lists {
-        min-height: 83vh;
-    }
+  .board .lists {
+    min-height: 83vh;
+  }
 }
 
 @media (min-height: 960px) {
-    .board .lists {
-        min-height: 88vh;
-    }
+  .board .lists {
+    min-height: 88vh;
+  }
 }
 
 .board .lists .list-wrapper {
-    background-color: #eee;
-    border-radius: 5px;
-    min-width: 280px;
-    max-width: 280px;
-    height: fit-content;
-    margin-top: 10px;
-    margin-right: 10px;
-    padding: 10px;
+  background-color: #eee;
+  border-radius: 5px;
+  min-width: 280px;
+  max-width: 280px;
+  height: fit-content;
+  margin-top: 10px;
+  margin-right: 10px;
+  padding: 10px;
 }
 
 .board .lists .list-wrapper .list-top {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
 }
 
 .board .lists .list-wrapper .list-top .list-title {
-    cursor: pointer;
-    padding: 5px 0 0 5px;
-    white-space: nowrap;
-    overflow: hidden;
+  cursor: pointer;
+  padding: 5px 0 0 5px;
+  white-space: nowrap;
+  overflow: hidden;
 }
 
 .board .lists .list-wrapper .create-card-button {
-    margin-top: 5px;
+  margin-top: 5px;
 }
 
 .board .lists .list-wrapper .create-card-form {
-    margin-top: 5px;
-    display: flex;
-    flex-direction: column;
+  margin-top: 5px;
+  display: flex;
+  flex-direction: column;
 }
 
 .board .lists .list-wrapper .card-edit-content {
-    padding-top: 0;
-    padding-bottom: 5px;
+  padding-top: 0;
+  padding-bottom: 5px;
 }
 
 .board .lists .list-wrapper .card-actions {
-    margin-bottom: 5px;
+  margin-bottom: 5px;
 }
 
 .board .lists .list-wrapper .not-adding-card {
-    max-height: 64vh;
+  max-height: 64vh;
 }
 
 @media (min-height: 960px) {
-    .board .lists .list-wrapper .not-adding-card {
-        max-height: 75vh;
-    }
+  .board .lists .list-wrapper .not-adding-card {
+    max-height: 75vh;
+  }
 }
 
 .board .lists .list-wrapper .adding-card {
-    max-height: 69vh;
+  max-height: 69vh;
 }
 
 @media (min-height: 960px) {
-    .board .lists .list-wrapper .adding-card {
-        max-height: 80vh;
-    }
+  .board .lists .list-wrapper .adding-card {
+    max-height: 80vh;
+  }
 }
 
 .board .lists .list-wrapper .list {
-    min-height: 1px;
-    overflow-y: auto;
+  min-height: 1px;
+  overflow-y: auto;
 }
 
 .board .lists .list-wrapper .list .cards {
-    display: flex;
-    flex-direction: column;
-    margin-right: 2px;
+  display: flex;
+  flex-direction: column;
+  margin-right: 2px;
 }
 
 .board .lists .list-wrapper .list .cards .card {
-    margin: 5px 0;
-    position: relative;
-    cursor: pointer;
+  margin: 5px 0;
+  position: relative;
+  cursor: pointer;
 }
 
 .board .lists .list-wrapper .list .cards .card .card-label {
-    height: 9px;
-    width: 45px;
-    border-radius: 5px;
-    margin-bottom: 5px;
+  height: 9px;
+  width: 45px;
+  border-radius: 5px;
+  margin-bottom: 5px;
 }
 
 .board .lists .list-wrapper .list .cards .card .description-indicator {
-    margin: 3px 5px -5px -3px;
+  margin: 3px 5px -5px -3px;
 }
 
 .board .lists .list-wrapper .list .cards .card .checklist-indicator {
-    display: flex;
-    align-items: center;
-    padding: 1px 5px 0 4px;
-    height: 25px;
-    margin: auto;
+  display: flex;
+  align-items: center;
+  padding: 1px 5px 0 4px;
+  height: 25px;
+  margin: auto;
 }
 
 .board
-    .lists
-    .list-wrapper
-    .list
-    .cards
-    .card
-    .checklist-indicator
-    .checklist-indicator-icon {
-    margin-right: 2px;
+  .lists
+  .list-wrapper
+  .list
+  .cards
+  .card
+  .checklist-indicator
+  .checklist-indicator-icon {
+  margin-right: 2px;
 }
 
 .board .lists .list-wrapper .list .cards .card .completed-checklist-indicator {
-    background-color: #00b800;
-    border-radius: 5px;
-    color: snow;
+  background-color: #00b800;
+  border-radius: 5px;
+  color: snow;
 }
 
 .board .lists .list-wrapper .list .cards .card .card-bottom {
-    display: flex;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    margin-top: 3px;
-    margin-bottom: -5px;
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  margin-top: 3px;
+  margin-bottom: -5px;
 }
 
 .board .lists .list-wrapper .list .cards .card .card-bottom .card-bottom-left {
-    display: flex;
+  display: flex;
 }
 
 .board
-    .lists
-    .list-wrapper
-    .list
-    .cards
-    .card
-    .card-bottom
-    .card-member-avatars {
-    display: flex;
-    flex-wrap: wrap;
+  .lists
+  .list-wrapper
+  .list
+  .cards
+  .card
+  .card-bottom
+  .card-member-avatars {
+  display: flex;
+  flex-wrap: wrap;
 }
 
 .board
-    .lists
-    .list-wrapper
-    .list
-    .cards
-    .card
-    .card-bottom
-    .card-member-avatars
-    .avatar {
-    width: 30px;
-    height: 30px;
-    font-size: 0.8rem;
-    background-color: #ddd;
+  .lists
+  .list-wrapper
+  .list
+  .cards
+  .card
+  .card-bottom
+  .card-member-avatars
+  .avatar {
+  width: 30px;
+  height: 30px;
+  font-size: 0.8rem;
+  background-color: #ddd;
 }
 
 .board
-    .lists
-    .list-wrapper
-    .list
-    .cards
-    .card
-    .card-bottom
-    .card-member-avatars
-    .avatar:hover {
-    background-color: #ccc;
+  .lists
+  .list-wrapper
+  .list
+  .cards
+  .card
+  .card-bottom
+  .card-member-avatars
+  .avatar:hover {
+  background-color: #ccc;
 }
 
 .board .lists .list-wrapper .list .cards .mouse-over {
-    background-color: whitesmoke;
+  background-color: whitesmoke;
 }
 
 .board .paper {
-    display: "flex";
-    flex-direction: "column";
-    position: "absolute";
-    left: "50%";
-    transform: "translateX(-50%)";
-    overflow-y: "auto";
-    background-color: "#fff";
-    border: "2px solid #000";
-    box-shadow: "10px";
-    padding: "20px";
+  display: "flex";
+  flex-direction: "column";
+  position: "absolute";
+  left: "50%";
+  transform: "translateX(-50%)";
+  overflow-y: "auto";
+  background-color: "#fff";
+  border: "2px solid #000";
+  box-shadow: "10px";
+  padding: "20px";
 }
 
-@media (min-height: 900px) {
-    .board .paper {
-        top: "5%";
-        max-height: 90vh;
-    }
+@media (min-height: 960) {
+  .board .paper {
+    top: "5%";
+    max-height: 90vh;
+  }
 }
 
 @media (max-height: 600px) {
-    .board .paper {
-        height: "100%";
-    }
+  .board .paper {
+    height: "100%";
+  }
 }
 
 .board .card-modal {
-    width: 800px;
+  width: 800px;
 }
 
 @media (max-height: 600px) {
-    .board .card-modal {
-        max-width: 400;
-    }
+  .board .card-modal {
+    max-width: 400;
+  }
 }
 
 .board .label-title {
-    margin: "20px 0 10px";
+  margin: "20px 0 10px";
 }
 
 .board .color-picker {
-    min-width: 212px;
+  min-width: 212px;
 }

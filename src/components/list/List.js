@@ -1,32 +1,28 @@
 import React, { useRef, useState, useEffect } from "react";
-import PropTypes from "prop-types";
 import { Draggable, Droppable } from "react-beautiful-dnd";
-import { useQuery, useQueryClient, useMutation } from "react-query";
 
 import { Button } from "@mui/material";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
+import { createTheme, ThemeProvider } from "@mui/material/styles";
 
-import { getList } from "../../api/boards";
 import ListTitle from "./ListTitle";
 import ListMenu from "./ListMenu";
 import Card from "../card/Card";
 import CreateCardForm from "./CreateCardForm";
 
-const List = ({ listId, index, board }) => {
-  const [addingCard, setAddingCard] = useState(false);
-  const [list, setList] = useState({});
-  const queryClient = useQueryClient();
-
-  const mutation = useMutation(({ id }) => getList(id), {
-    onSuccess: (data) => {
-      queryClient.invalidateQueries(["lists"]);
-      setList(data);
+const theme = createTheme({
+  palette: {
+    primary: {
+      light: "#757ce8",
+      main: "#3f50b5",
+      dark: "#002884",
+      contrastText: "#fff",
     },
-  });
+  },
+});
 
-  useEffect(() => {
-    mutation.mutate({ id: listId });
-  }, [listId]);
+const List = ({ listId, index, list, board }) => {
+  const [addingCard, setAddingCard] = useState(false);
 
   const createCardFormRef = useRef(null);
   useEffect(() => {
@@ -62,8 +58,9 @@ const List = ({ listId, index, board }) => {
                     <Card
                       key={cardId}
                       cardId={cardId}
-                      list={list}
                       index={index}
+                      list={list}
+                      board={board}
                     />
                   ))}
                 </div>
@@ -81,10 +78,12 @@ const List = ({ listId, index, board }) => {
             )}
           </Droppable>
           {!addingCard && (
-            <div className="create-card-button">
-              <Button variant="contained" onClick={() => setAddingCard(true)}>
-                <AddCircleOutlineIcon /> Add a card
-              </Button>
+            <div className="create-card-button flex justify-start">
+              <ThemeProvider theme={theme}>
+                <Button variant="contained" onClick={() => setAddingCard(true)}>
+                  <AddCircleOutlineIcon sx={{ marginRight: 0.5 }} /> Add a card
+                </Button>
+              </ThemeProvider>
             </div>
           )}
         </div>
@@ -92,10 +91,5 @@ const List = ({ listId, index, board }) => {
     </Draggable>
   );
 };
-
-// List.propTypes = {
-//   listId: PropTypes.string.isRequired,
-//   index: PropTypes.number.isRequired,
-// };
 
 export default List;

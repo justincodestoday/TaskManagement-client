@@ -1,15 +1,46 @@
 import React, { useState } from "react";
-import { useDispatch } from "react-redux";
-import PropTypes from "prop-types";
+import { useQueryClient, useMutation } from "react-query";
+import { toast } from "react-toastify";
 
 import { Button, Dialog, DialogActions, DialogTitle } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 
 import { deleteCard } from "../../api/boards";
 
-const DeleteCard = ({ cardId, setOpen, list }) => {
+const DeleteCard = ({ cardId, setOpen, list, board }) => {
   const [openDialog, setOpenDialog] = useState(false);
-  const dispatch = useDispatch();
+  const queryClient = useQueryClient();
+
+  const mutation = useMutation(
+    ({ listId, cardId, boardId }) => deleteCard(listId, cardId, boardId),
+    {
+      onError: (error) => {
+        toast.error(`Error: ${error.message}`, {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: false,
+          pauseOnFocusLoss: false,
+          draggable: false,
+        });
+      },
+
+      onSuccess: (data) => {
+        queryClient.invalidateQueries(["lists"]);
+
+        toast.success(`Success: ${data.message}`, {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: false,
+          pauseOnFocusLoss: false,
+          draggable: false,
+        });
+      },
+    }
+  );
 
   const handleClickOpen = () => {
     setOpenDialog(true);
@@ -20,7 +51,7 @@ const DeleteCard = ({ cardId, setOpen, list }) => {
   };
 
   const onDeleteCard = async () => {
-    dispatch(deleteCard(list._id, cardId));
+    mutation.mutate({ listId: list._id, cardId: cardId, boardId: board._id });
     setOpenDialog(false);
     setOpen(false);
   };
@@ -48,12 +79,6 @@ const DeleteCard = ({ cardId, setOpen, list }) => {
       </Dialog>
     </div>
   );
-};
-
-DeleteCard.propTypes = {
-  cardId: PropTypes.string.isRequired,
-  setOpen: PropTypes.func.isRequired,
-  list: PropTypes.object.isRequired,
 };
 
 export default DeleteCard;

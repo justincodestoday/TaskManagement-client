@@ -10,12 +10,24 @@ import {
   Autocomplete,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
+import { blue } from "@mui/material/colors";
+import { createTheme, ThemeProvider } from "@mui/material/styles";
 
 import { addMember } from "../../api/boards";
 import getInitials from "../../utils/getInitials";
 
+const theme = createTheme({
+  palette: {
+    primary: {
+      light: "#757ce8",
+      main: "#3f50b5",
+      dark: "#002884",
+      contrastText: "#fff",
+    },
+  },
+});
+
 const Members = ({ board }) => {
-  const [boardData, setBoardData] = useState(board);
   const [inviting, setInviting] = useState(false);
   const [user, setUser] = useState(null);
   const [inputValue, setInputValue] = useState("");
@@ -45,7 +57,7 @@ const Members = ({ board }) => {
       },
 
       onSuccess: (data) => {
-        queryClient.invalidateQueries(["boards"]);
+        queryClient.invalidateQueries(["board"]);
 
         toast.success(`Success: ${data.message}`, {
           position: "top-right",
@@ -83,10 +95,6 @@ const Members = ({ board }) => {
     setInviting(false);
   };
 
-  useEffect(() => {
-    setBoardData(board);
-  }, [board]);
-
   return (
     <div className="board-members-wrapper">
       <div className="board-members">
@@ -101,46 +109,61 @@ const Members = ({ board }) => {
         })}
       </div>
       {!inviting ? (
-        <Button
-          className="invite"
-          variant="contained"
-          onClick={() => setInviting(true)}
-        >
-          Invite
-        </Button>
+        <ThemeProvider theme={theme}>
+          <Button
+            className="invite"
+            variant="contained"
+            onClick={() => setInviting(true)}
+          >
+            Invite
+          </Button>
+        </ThemeProvider>
       ) : (
         <div className="invite">
-          <Autocomplete
-            value={user}
-            onChange={(e, newMember) => setUser(newMember)}
-            inputValue={inputValue}
-            onInputChange={(e, newInputValue) =>
-              handleInputValue(newInputValue)
-            }
-            options={searchOptions}
-            getOptionLabel={(member) => member.email}
-            className="search-member"
-            renderInput={(params) => (
-              <TextField
-                {...params}
-                helperText="Search for user by email"
-                autoFocus
-                sx={{ backgroundColor: "#fff" }}
-              />
-            )}
-          />
+          <ThemeProvider theme={theme}>
+            <Autocomplete
+              size="small"
+              value={user}
+              onChange={(e, newMember) => setUser(newMember)}
+              inputValue={inputValue}
+              onInputChange={(e, newInputValue) =>
+                handleInputValue(newInputValue)
+              }
+              options={searchOptions}
+              getOptionLabel={(member) => member.email}
+              className="search-member"
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  helperText="Search for user by email"
+                  autoFocus
+                  variant="standard"
+                  sx={{ backgroundColor: "#fff", paddingX: 1, borderRadius: 2 }}
+                />
+              )}
+            />
+          </ThemeProvider>
           <div className="add-member">
-            <Button
-              disabled={!user}
-              variant="contained"
-              color="primary"
-              onClick={() => onSubmitHandler()}
-            >
-              Add Member
-            </Button>
-            <Button onClick={() => setInviting(false)}>
-              <CloseIcon />
-            </Button>
+            <ThemeProvider theme={theme}>
+              <Button
+                disabled={!user}
+                variant="contained"
+                color="primary"
+                onClick={() => onSubmitHandler()}
+              >
+                Add Member
+              </Button>
+              <Button onClick={() => setInviting(false)}>
+                <CloseIcon
+                  fontSize="large"
+                  sx={{
+                    backgroundColor: "#3f50b5",
+                    color: "#fff",
+                    borderRadius: 5,
+                  }}
+                />
+              </Button>
+            </ThemeProvider>
           </div>
         </div>
       )}

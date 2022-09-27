@@ -1,11 +1,22 @@
 import React, { useState, useEffect } from "react";
-import PropTypes from "prop-types";
 import { useMutation, useQueryClient } from "react-query";
 import { toast } from "react-toastify";
 
 import { TextField } from "@mui/material";
+import { createTheme, ThemeProvider } from "@mui/material/styles";
 
 import { renameBoard } from "../../api/boards";
+
+const theme = createTheme({
+  palette: {
+    primary: {
+      light: "#757ce8",
+      main: "#3f50b5",
+      dark: "#002884",
+      contrastText: "#fff",
+    },
+  },
+});
 
 const BoardTitle = ({ board }) => {
   const [editing, setEditing] = useState(false);
@@ -32,7 +43,7 @@ const BoardTitle = ({ board }) => {
       },
 
       onSuccess: (data) => {
-        queryClient.invalidateQueries(["boards"]);
+        queryClient.invalidateQueries(["board"]);
 
         toast.success(`Success: ${data.message}`, {
           position: "top-right",
@@ -59,19 +70,17 @@ const BoardTitle = ({ board }) => {
     </h2>
   ) : (
     <form className="board-title-form" onSubmit={(e) => onSubmitHandler(e)}>
-      <TextField
-        variant="outlined"
-        required
-        value={title}
-        size="small"
-        onChange={(e) => setTitle(e.target.value)}
-      />
+      <ThemeProvider theme={theme}>
+        <TextField
+          variant="outlined"
+          required
+          value={title}
+          size="small"
+          onChange={(e) => setTitle(e.target.value)}
+        />
+      </ThemeProvider>
     </form>
   );
 };
-
-// BoardTitle.propTypes = {
-//   board: PropTypes.object.isRequired,
-// };
 
 export default BoardTitle;

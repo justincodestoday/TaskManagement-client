@@ -1,16 +1,27 @@
 import React, { useRef, useState, useEffect } from "react";
-import { useQuery, useQueryClient, useMutation } from "react-query";
+import { useQueryClient, useMutation } from "react-query";
 import { toast } from "react-toastify";
 
 import { TextField, Button } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
+import { createTheme, ThemeProvider } from "@mui/material/styles";
 
 import { addList } from "../../api/boards";
 
+const theme = createTheme({
+  palette: {
+    primary: {
+      light: "#757ce8",
+      main: "#3f50b5",
+      dark: "#002884",
+      contrastText: "#fff",
+    },
+  },
+});
+
 const CreateList = ({ board }) => {
   const [adding, setAdding] = useState(false);
-  const [boardId, setBoardId] = useState(board._id);
   const [title, setTitle] = useState("");
   const queryClient = useQueryClient();
 
@@ -58,36 +69,46 @@ const CreateList = ({ board }) => {
   };
 
   return !adding ? (
-    <div className="create-list-button">
-      <Button variant="contained" onClick={() => setAdding(true)}>
-        <AddCircleOutlineIcon /> Add a list
-      </Button>
+    <div className="mt-2.5">
+      <ThemeProvider theme={theme}>
+        <Button
+          variant="contained"
+          sx={{ width: 280 }}
+          onClick={() => setAdding(true)}
+        >
+          <AddCircleOutlineIcon sx={{ marginRight: 0.5 }} /> Add a list
+        </Button>
+      </ThemeProvider>
     </div>
   ) : (
     <div ref={formRef} className="create-list-form">
       <form onSubmit={(e) => onSubmit(e)}>
-        <TextField
-          variant="outlined"
-          fullWidth
-          margin="normal"
-          required
-          label="Enter list title"
-          autoFocus
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-        />
-        <div>
-          <Button type="submit" variant="contained" color="primary">
-            Add List
-          </Button>
-          <Button
-            onClick={() => {
-              setAdding(false);
-              setTitle("");
-            }}
-          >
-            <CloseIcon />
-          </Button>
+        <ThemeProvider theme={theme}>
+          <TextField
+            variant="outlined"
+            fullWidth
+            margin="normal"
+            required
+            label="Enter list title"
+            autoFocus
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+          />
+        </ThemeProvider>
+        <div className="flex justify-start">
+          <ThemeProvider theme={theme}>
+            <Button type="submit" variant="contained" color="primary">
+              Add List
+            </Button>
+            <Button
+              onClick={() => {
+                setAdding(false);
+                setTitle("");
+              }}
+            >
+              <CloseIcon />
+            </Button>
+          </ThemeProvider>
         </div>
       </form>
     </div>
