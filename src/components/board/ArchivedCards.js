@@ -53,7 +53,7 @@ const ArchivedCards = ({ board, lists, cards }) => {
             },
 
             onSuccess: (data) => {
-                queryClient.invalidateQueries(["cards"]);
+                queryClient.invalidateQueries(["cards", "lists"]);
 
                 toast.success(`Success: ${data.message}`, {
                     position: "top-right",
@@ -84,7 +84,7 @@ const ArchivedCards = ({ board, lists, cards }) => {
             },
 
             onSuccess: (data) => {
-                queryClient.invalidateQueries(["cards"]);
+                queryClient.invalidateQueries(["cards", "lists"]);
             },
         }
     );

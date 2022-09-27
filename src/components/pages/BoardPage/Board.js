@@ -80,7 +80,7 @@ export const Board = () => {
         ({ cardId, formData, boardId }) => moveCard(cardId, formData, boardId),
         {
             onSuccess: (data) => {
-                queryClient.invalidateQueries(["lists"]);
+                queryClient.invalidateQueries(["lists", "cards"]);
             },
         }
     );

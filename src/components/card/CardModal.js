@@ -50,7 +50,7 @@ const CardModal = ({ cardId, open, setOpen, card, list, board }) => {
             },
 
             onSuccess: (data) => {
-                queryClient.invalidateQueries(["board"]);
+                queryClient.invalidateQueries(["cards", "lists"]);
             },
         }
     );
@@ -71,7 +71,7 @@ const CardModal = ({ cardId, open, setOpen, card, list, board }) => {
             },
 
             onSuccess: (data) => {
-                queryClient.invalidateQueries(["board"]);
+                queryClient.invalidateQueries(["cards", "lists"]);
 
                 toast.success(`Success: ${data.message}`, {
                     position: "top-right",
