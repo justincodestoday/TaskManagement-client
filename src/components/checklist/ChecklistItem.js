@@ -1,6 +1,5 @@
 import React, { Fragment, useState, useEffect } from "react";
-import { useDispatch } from "react-redux";
-import PropTypes from "prop-types";
+import { useQueryClient, useMutation } from "react-query";
 
 import { TextField, Button, Checkbox, FormControlLabel } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
@@ -12,42 +11,66 @@ import {
   editChecklistItem,
   deleteChecklistItem,
 } from "../../api/boards";
-// import useStyles from "../../utils/modalStyles";
 
 const ChecklistItem = ({ item, card }) => {
-  // const classes = useStyles();
-  // need to fix this
-  const classes = "hi";
   const [text, setText] = useState(item.text);
   const [editing, setEditing] = useState(false);
-  const dispatch = useDispatch();
+  const queryClient = useQueryClient();
 
   useEffect(() => {
     setText(item.text);
   }, [item.text]);
 
+  const editMutation = useMutation(
+    ({ cardId, itemId, text }) => editChecklistItem(cardId, itemId, text),
+    {
+      onSuccess: (data) => {
+        queryClient.invalidateQueries(["cards"]);
+      },
+    }
+  );
+
+  const completeMutation = useMutation(
+    ({ cardId, complete, itemId }) =>
+      completeChecklistItem(cardId, complete, itemId),
+    {
+      onSuccess: (data) => {
+        queryClient.invalidateQueries(["cards"]);
+      },
+    }
+  );
+
+  const deleteMutation = useMutation(
+    ({ cardId, itemId }) => deleteChecklistItem(cardId, itemId),
+    {
+      onSuccess: (data) => {
+        queryClient.invalidateQueries(["cards"]);
+      },
+    }
+  );
+
   const onEdit = async (e) => {
     e.preventDefault();
-    dispatch(editChecklistItem(card._id, item._id, { text }));
+    // editMutation.mutate(card._id, item._id, { text });
+    editMutation.mutate({ cardId: card._id, itemId: item._id, text });
     setEditing(false);
   };
 
   const onComplete = async (e) => {
-    dispatch(
-      completeChecklistItem({
-        cardId: card._id,
-        complete: e.target.checked,
-        itemId: item._id,
-      })
-    );
+    completeMutation.mutate({
+      cardId: card._id,
+      complete: e.target.checked,
+      itemId: item._id,
+    });
   };
 
   const onDelete = async (e) => {
-    dispatch(deleteChecklistItem(card._id, item._id));
+    // deleteMutation.mutate(card._id, item._id);
+    deleteMutation.mutate({ cardId: card._id, itemId: item._id });
   };
 
   return (
-    <div className={classes.checklistItem}>
+    <div className="classes.checklistItem">
       {editing ? (
         <form
           onSubmit={(e) => onEdit(e)}
@@ -112,11 +135,6 @@ const ChecklistItem = ({ item, card }) => {
       )}
     </div>
   );
-};
-
-ChecklistItem.propTypes = {
-  item: PropTypes.object.isRequired,
-  card: PropTypes.object.isRequired,
 };
 
 export default ChecklistItem;

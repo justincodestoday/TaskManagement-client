@@ -1,24 +1,41 @@
 import React, { useState } from "react";
-import { useDispatch } from "react-redux";
-import PropTypes from "prop-types";
+import { useQueryClient, useMutation } from "react-query";
 
 import { TextField, Button } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 
 import { addChecklistItem } from "../../api/boards";
-// import useStyles from "../../utils/modalStyles";
 
 const CreateChecklistItem = ({ cardId }) => {
-  // const classes = useStyles();
-  // need to fix this
-  const classes = "hi";
   const [adding, setAdding] = useState(false);
   const [text, setText] = useState("");
-  const dispatch = useDispatch();
+  const queryClient = useQueryClient();
+
+  const mutation = useMutation(
+    ({ cardId, text }) => addChecklistItem(cardId, text),
+    {
+      onError: (error) => {
+        toast.error(`Error: ${error.message}`, {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: false,
+          pauseOnFocusLoss: false,
+          draggable: false,
+        });
+      },
+
+      onSuccess: (data) => {
+        queryClient.invalidateQueries(["cards"]);
+      },
+    }
+  );
 
   const onSubmit = async (e) => {
     e.preventDefault();
-    dispatch(addChecklistItem(cardId, { text }));
+    // mutation.mutate(cardId, { text });
+    mutation.mutate({ cardId: card._id, text });
     setText("");
   };
 
@@ -58,10 +75,6 @@ const CreateChecklistItem = ({ cardId }) => {
       </form>
     </div>
   );
-};
-
-CreateChecklistItem.propTypes = {
-  cardId: PropTypes.string.isRequired,
 };
 
 export default CreateChecklistItem;
