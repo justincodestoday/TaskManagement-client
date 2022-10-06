@@ -1,5 +1,4 @@
 import React, { Fragment, useState, useEffect } from "react";
-import PropTypes from "prop-types";
 import { useQuery, useQueryClient, useMutation } from "react-query";
 
 import {
@@ -94,10 +93,5 @@ const MoveList = ({ listData, listId, board, closeMenu }) => {
     </Fragment>
   );
 };
-
-// MoveList.propTypes = {
-//   listId: PropTypes.string.isRequired,
-//   closeMenu: PropTypes.func.isRequired,
-// };
 
 export default MoveList;

@@ -1,6 +1,5 @@
 import React from "react";
-import { useSelector, useDispatch } from "react-redux";
-import PropTypes from "prop-types";
+import { useQueryClient, useMutation } from "react-query";
 
 import {
   Checkbox,
@@ -10,15 +9,32 @@ import {
 } from "@mui/material";
 
 import { addCardMember } from "../../api/boards";
-// import useStyles from "../../utils/modalStyles";
 
-const CardMembers = ({ card }) => {
-  // const classes = useStyles();
-  // need to fix this
-  const classes = "hi";
-  const boardMembers = useSelector((state) => state.board.board.members);
+const CardMembers = ({ card, board }) => {
+  const boardMembers = board.members;
   const members = card.members.map((member) => member.user);
-  const dispatch = useDispatch();
+  const queryClient = useQueryClient();
+
+  const mutation = useMutation(
+    ({ add, cardId, userId }) => addCardMember(add, cardId, userId),
+    {
+      onError: (error) => {
+        toast.error(`Error: ${error.message}`, {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: false,
+          pauseOnFocusLoss: false,
+          draggable: false,
+        });
+      },
+
+      onSuccess: (data) => {
+        queryClient.invalidateQueries(["cards"]);
+      },
+    }
+  );
 
   return (
     <div>
@@ -32,13 +48,11 @@ const CardMembers = ({ card }) => {
                 <Checkbox
                   checked={members.indexOf(member.user) !== -1}
                   onChange={async (e) =>
-                    dispatch(
-                      addCardMember({
-                        add: e.target.checked,
-                        cardId: card._id,
-                        userId: e.target.name,
-                      })
-                    )
+                    mutation.mutate({
+                      add: e.target.checked,
+                      cardId: card._id,
+                      userId: e.target.name,
+                    })
                   }
                   name={member.user}
                 />
@@ -50,10 +64,6 @@ const CardMembers = ({ card }) => {
       </FormControl>
     </div>
   );
-};
-
-CardMembers.propTypes = {
-  card: PropTypes.object.isRequired,
 };
 
 export default CardMembers;

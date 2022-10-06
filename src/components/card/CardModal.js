@@ -168,7 +168,7 @@ const CardModal = ({ cardId, open, setOpen, card, list, board }) => {
               </Button>
             </form>
             <div className="flex justify-between flex-wrap h-auto">
-              {/* <CardMembers card={card} /> */}
+              {/* <CardMembers card={card} board={board} /> */}
               <div>
                 <h3 className="label-title">Label</h3>
                 <GithubPicker
@@ -196,7 +196,7 @@ const CardModal = ({ cardId, open, setOpen, card, list, board }) => {
             </div>
             {/* <Checklist card={card} /> */}
             <div className="flex justify-between flex-wrap h-auto">
-              {/* <MoveCard cardId={cardId} setOpen={setOpen} thisList={list} /> */}
+              {/* <MoveCard cardId={cardId} setOpen={setOpen} thisList={list} board={board} /> */}
               <div className="mt-5">
                 <Button
                   variant="contained"
